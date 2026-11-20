@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2f6fed">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TaskPlus">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>TaskPlus</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--bg:#fafaf9;--panel:#fff;--tx:#1c1b1a;--mut:#78756f;--bd:#e7e5e0;--ac:#2f6fed;--acs:#e8efff;--red:#d93025;--chip:#f0eeea;--p1:#4c8bf5;--p2:#f29900;--p3:#d93025}
+@media(prefers-color-scheme:dark){:root{--bg:#171716;--panel:#1f1f1e;--tx:#ecebe8;--mut:#9a978f;--bd:#30302e;--ac:#7aa5ff;--acs:#22304f;--red:#ff7b72;--chip:#2a2a28}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.45 system-ui,-apple-system,"PingFang HK","Noto Sans HK","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--tx)}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+button{cursor:pointer}
+[hidden]{display:none!important}
+#app{display:flex;height:100vh;height:100dvh;padding-top:env(safe-area-inset-top)}
+#list{padding-bottom:calc(80px + env(safe-area-inset-bottom))!important}
+#side{width:250px;flex:none;background:var(--panel);border-right:1px solid var(--bd);padding:14px 10px;overflow:auto}
+#side h4{margin:18px 8px 6px;font-size:12px;color:var(--mut);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.si{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;cursor:pointer;gap:8px}
+.si span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.si i{font-style:normal;font-size:12px;color:var(--mut)}
+.si:hover{background:var(--chip)}.si.on{background:var(--acs);color:var(--ac);font-weight:600}
+#main{flex:1;min-width:0;display:flex;flex-direction:column}
+header{display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bd);background:var(--panel);flex-wrap:wrap}
+header h1{font-size:18px;margin:0;margin-right:auto}
+header input[type=search]{width:220px}
+header label{font-size:13px;color:var(--mut);display:flex;gap:4px;align-items:center;white-space:nowrap}
+.mini{background:none;border:0;padding:2px 7px;border-radius:6px;color:var(--mut);font-size:15px}
+.mini:hover{background:var(--chip);color:var(--tx)}
+#burger{display:none}
+#sync{font-size:12px;color:var(--mut)}
+#add{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap}
+#add #qa{flex:1;min-width:180px}
+#add button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:7px 16px}
+#err{color:var(--red);padding:0 16px;font-size:13px}
+#list{flex:1;overflow:auto;padding:0 16px 80px}
+.lh{font-size:13px;color:var(--mut);margin:18px 0 4px;font-weight:600}
+.row{display:flex;align-items:flex-start;gap:6px;padding:7px 6px;border-bottom:1px solid var(--bd)}
+.row:hover{background:var(--chip)}
+.fold{width:16px;flex:none;text-align:center;color:var(--mut);cursor:pointer;user-select:none;margin-top:1px}
+.chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--mut);background:none;flex:none;margin-top:1px;padding:0;font-size:12px;line-height:14px;color:#fff}
+.chk.p1{border-color:var(--p1)}.chk.p2{border-color:var(--p2)}.chk.p3{border-color:var(--p3)}
+.row.done .chk{background:var(--mut);border-color:var(--mut)}
+.row.done .title{text-decoration:line-through;color:var(--mut)}
+.main{flex:1;min-width:0;cursor:pointer}
+.title{word-break:break-word}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;font-size:12px;color:var(--mut)}
+.meta span{background:var(--chip);border-radius:10px;padding:0 8px}
+.meta .od{color:var(--red)}
+.meta .tg{color:var(--ac);cursor:pointer}
+.subadd{padding:6px 0 6px 44px}
+.subadd input{width:100%}
+.empty{text-align:center;color:var(--mut);padding:60px 0}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--panel);color:var(--tx);width:min(520px,94vw);padding:20px}
+dialog::backdrop{background:#0006}
+dialog label{display:block;font-size:12px;color:var(--mut);margin:12px 0 4px}
+dialog input,dialog select,dialog textarea{width:100%}
+dialog textarea{min-height:90px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns{display:flex;gap:8px;margin-top:18px}
+.btns .sp{flex:1}
+.btn{border:1px solid var(--bd);background:var(--panel);border-radius:8px;padding:7px 16px}
+.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn.del{color:var(--red)}
+#gate{max-width:520px;margin:8vh auto;padding:24px}
+#gate h1{margin:0 0 8px}
+#gate p,#gate li{color:var(--mut)}
+#gate input{width:100%;margin:8px 0}
+#gate .btn{margin-top:6px}
+details{margin:14px 0}
+@media(max-width:760px){
+ #burger{display:block}
+ #side{position:fixed;inset:0 auto 0 0;z-index:20;transform:translateX(-100%);transition:.2s;box-shadow:none}
+ body.nav #side{transform:none;box-shadow:4px 0 24px #0005}
+ header input[type=search]{width:100%;order:9}
+}
+</style>
+</head>
+<body>
+
+<div id="gate" hidden>
+  <h1>TaskPlus</h1>
+  <p>加強版 Google Tasks：分類、標籤、優先度、搜尋、多層子任務，全部同步返 Google Tasks（Google 日曆都睇到）。</p>
+  <label>Google OAuth Client ID</label>
+  <input id="cid" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
+  <button class="btn pri" id="signin">儲存並用 Google 登入</button>
+  <div id="gerr" style="color:var(--red);font-size:13px;margin-top:8px"></div>
+  <details>
+    <summary>第一次用？點樣攞 Client ID</summary>
+    <ol>
+      <li>去 console.cloud.google.com 開一個新 Project。</li>
+      <li>「API 和服務」→「程式庫」→ 啟用 <b>Google Tasks API</b>。</li>
+      <li>「OAuth 同意畫面」→ 揀 External，Publishing status 保持 Testing，喺 Test users 加你自己嘅 Gmail。</li>
+      <li>「憑證」→ 建立憑證 → OAuth 用戶端 ID → 類型 <b>網頁應用程式</b>。</li>
+      <li>「已授權的 JavaScript 來源」加 <code>http://localhost:8000</code>（或你部署嘅網址）。</li>
+      <li>複製 Client ID 貼上面。</li>
+    </ol>
+    <p>用 <code>python3 -m http.server 8000</code> 喺呢個檔案所在資料夾開 server，然後瀏覽 http://localhost:8000。</p>
+  </details>
+</div>
+
+<div id="app" hidden>
+  <aside id="side"></aside>
+  <section id="main">
+    <header>
+      <button id="burger" class="mini">☰</button>
+      <h1 id="vt"></h1>
+      <span id="vacts"></span>
+      <input id="q" type="search" placeholder="搜尋標題、備註、標籤（按 / ）">
+      <select id="sort">
+        <option value="manual">手動排序</option>
+        <option value="due">按到期日</option>
+        <option value="pri">按優先度</option>
+      </select>
+      <label><input type="checkbox" id="done"> 顯示已完成</label>
+      <a class="mini" href="https://calendar.google.com/calendar/u/0/r" target="_blank" rel="noopener" title="開 Google 日曆">📅</a>
+      <button id="syncb" class="mini" title="立即同步">⟳</button><span id="sync"></span>
+      <button id="out" class="mini" title="登出">⏻</button>
+    </header>
+    <form id="add">
+      <input id="qa" placeholder="新增任務…  例：交報告 #工作 !2　（#標籤　!1–3 優先度）" autocomplete="off">
+      <input id="qd" type="date">
+      <select id="ql"></select>
+      <button>新增</button>
+    </form>
+    <div id="err"></div>
+    <div id="list"></div>
+  </section>
+</div>
+<dialog id="dlg"></dialog>
+
+<script>
+const SCOPE='https://www.googleapis.com/auth/tasks';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const S={lists:[],tasks:{},view:{t:'all',id:''},q:'',done:false,sort:'manual',collapsed:new Set(LS('tt_col')||[]),sub:null,focusSub:false,busy:0,err:'',synced:null};
+let cid=LS('tt_cid'),token=null,tokExp=0,authP=null,CH={};
+const today=()=>new Date().toLocaleDateString('sv');
+const byPos=(a,b)=>a.pos<b.pos?-1:a.pos>b.pos?1:0;
+
+/* ---------- 資料模型：標籤/優先度/深層子任務存喺備註尾 [[tt:{...}]] ---------- */
+const MRE=/(?:\n\n)?\[\[tt:(\{.*?\})\]\]\s*$/s;
+function norm(t,list){
+  let notes=t.notes||'',meta={};
+  const m=notes.match(MRE);
+  if(m){try{meta=JSON.parse(m[1])}catch{}notes=notes.slice(0,m.index)}
+  return{id:t.id,list,title:t.title||'',notes,tags:meta.tags||[],pri:meta.pri||0,up:meta.up||null,
+    done:t.status==='completed',due:t.due?t.due.slice(0,10):null,parent:t.parent||null,pos:t.position||'',updated:t.updated};
+}
+function enc(t){
+  const m={};
+  if(t.tags&&t.tags.length)m.tags=t.tags;
+  if(t.pri)m.pri=t.pri;
+  if(t.up)m.up=t.up;
+  const has=Object.keys(m).length;
+  return(t.notes||'')+(has?((t.notes?'\n\n':'')+'[[tt:'+JSON.stringify(m)+']]'):'');
+}
+const T=()=>Object.values(S.tasks);
+const lp=t=>t.up&&S.tasks[t.up]?t.up:t.parent;
+function desc(id){const o=[];(function w(i){(CH[i]||[]).forEach(c=>{o.push(c.id);w(c.id)})})(id);return o}
+const shown=t=>S.done||!t.done||(CH[t.id]||[]).some(shown);
+
+/* ---------- Auth ---------- */
+function gis(){return new Promise((res,rej)=>{let n=0;const i=setInterval(()=>{if(window.google&&google.accounts&&google.accounts.oauth2){clearInterval(i);res()}else if(++n>100){clearInterval(i);rej(new Error('載入唔到 Google 登入元件，請檢查網絡'))}},100)})}
+function auth(silent){
+  return new Promise((res,rej)=>{
+    const c=google.accounts.oauth2.initTokenClient({client_id:cid,scope:SCOPE,
+      callback:r=>{if(r.error)return rej(new Error(r.error));token=r.access_token;tokExp=Date.now()+(r.expires_in-120)*1000;
+        try{sessionStorage.setItem('tt_tok',JSON.stringify([token,tokExp]))}catch{}LS('tt_signed',1);res()},
+      error_callback:e=>rej(new Error(e.type||'auth'))});
+    c.requestAccessToken({prompt:silent?'none':''});
+  });
+}
+const ensure=()=>token&&Date.now()<tokExp?Promise.resolve():(authP||(authP=auth(true).catch(e=>{showGate();throw new Error('需要重新登入')}).finally(()=>{authP=null})));
+async function api(p,o={},retry=true){
+  await ensure();
+  const r=await fetch('https://tasks.googleapis.com/tasks/v1'+p,{...o,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'}});
+  if(r.status===401&&retry){token=null;return api(p,o,false)}
+  if(!r.ok)throw new Error('Google API '+r.status+' '+(await r.text()).slice(0,120));
+  return r.status===204?null:r.json();
+}
+
+/* ---------- 同步 ---------- */
+async function pull(force){
+  if(!force&&(S.busy||$('#dlg').open))return;
+  $('#sync').textContent='同步中…';
+  try{
+    await ensure();
+    const ls=(await api('/users/@me/lists?maxResults=100')).items||[];
+    const all={};
+    await Promise.all(ls.map(async l=>{
+      let pt,items=[];
+      do{const d=await api(`/lists/${l.id}/tasks?maxResults=100&showCompleted=true&showHidden=true`+(pt?'&pageToken='+pt:''));
+        items.push(...(d.items||[]));pt=d.nextPageToken}while(pt);
+      items.forEach(t=>{all[t.id]=norm(t,l.id)});
+    }));
+    if(!force&&S.busy)return;
+    S.lists=ls;S.tasks=all;S.synced=new Date();S.err='';
+    LS('tt_cache',{lists:ls,tasks:all});
+    $('#sync').textContent='已同步 '+S.synced.toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit'});
+    render();
+  }catch(e){$('#sync').textContent='同步失敗';S.err=e.message;render()}
+}
+async function run(fn){
+  S.busy++;S.err='';
+  try{const p=fn();render();await p}
+  catch(e){S.err=String(e.message||e).slice(0,200);setTimeout(()=>pull(true),600)}
+  finally{S.busy--;render()}
+}
+
+/* ---------- 操作 ---------- */
+async function addTask(list,title,o={}){
+  const par=o.parent?S.tasks[o.parent]:null;
+  const ap=par?(par.parent||par.id):null;
+  const last=T().filter(t=>t.list===list&&t.parent===ap).sort(byPos).pop();
+  const t={title,notes:'',tags:o.tags||[],pri:o.pri||0,up:par&&par.id!==ap?par.id:null};
+  const body={title,notes:enc(t)};
+  if(o.due)body.due=o.due+'T00:00:00.000Z';
+  const q=new URLSearchParams();
+  if(ap)q.set('parent',ap);
+  if(last)q.set('previous',last.id);
+  const r=await api(`/lists/${list}/tasks?${q}`,{method:'POST',body:JSON.stringify(body)});
+  S.tasks[r.id]=norm(r,list);
+}
+async function patch(id,ch){
+  const t=S.tasks[id];if(!t)return;
+  Object.assign(t,ch);
+  const body={title:t.title,notes:enc(t),status:t.done?'completed':'needsAction',due:t.due?t.due+'T00:00:00.000Z':null};
+  if(!t.done)body.completed=null;
+  const r=await api(`/lists/${t.list}/tasks/${id}`,{method:'PATCH',body:JSON.stringify(body)});
+  if(S.tasks[id])S.tasks[id].updated=r.updated;
+}
+async function removeTask(id){
+  const ids=[id,...desc(id)];
+  const ts=ids.map(i=>S.tasks[i]);
+  ids.forEach(i=>delete S.tasks[i]);
+  await Promise.allSettled(ts.map(t=>api(`/lists/${t.list}/tasks/${t.id}`,{method:'DELETE'})));
+}
+async function moveList(id,nl){
+  const ids=[id,...desc(id)];
+  const old=ids.map(i=>({...S.tasks[i],lpOld:lp(S.tasks[i])}));
+  const map={},lastBy={};
+  for(const o of old){
+    const root=o.id===id;
+    const newLp=root?null:map[o.lpOld];
+    const t={...o,list:nl,up:root?null:(newLp!==map[id]?newLp:null)};
+    const body={title:o.title,notes:enc(t),status:o.done?'completed':'needsAction'};
+    if(o.due)body.due=o.due+'T00:00:00.000Z';
+    const key=root?'':map[id];
+    const q=new URLSearchParams();
+    if(!root)q.set('parent',map[id]);
+    if(lastBy[key])q.set('previous',lastBy[key]);
+    const r=await api(`/lists/${nl}/tasks?${q}`,{method:'POST',body:JSON.stringify(body)});
+    map[o.id]=r.id;lastBy[key]=r.id;S.tasks[r.id]=norm(r,nl);
+  }
+  for(const o of old){delete S.tasks[o.id]}
+  await Promise.allSettled(old.map(o=>api(`/lists/${o.list}/tasks/${o.id}`,{method:'DELETE'})));
+}
+async function reparent(id,newLp){
+  const t=S.tasks[id];
+  const ds=desc(id);
+  const Ls=Object.fromEntries(ds.map(d=>[d,lp(S.tasks[d])]));
+  const p=newLp?S.tasks[newLp]:null;
+  const ap=p?(p.parent||p.id):null;
+  const last=T().filter(x=>x.list===t.list&&x.parent===ap&&x.id!==id).sort(byPos).pop();
+  const q=new URLSearchParams();
+  if(ap)q.set('parent',ap);
+  if(last)q.set('previous',last.id);
+  const r=await api(`/lists/${t.list}/tasks/${id}/move?${q}`,{method:'POST'});
+  t.parent=r.parent||null;t.pos=r.position;t.up=p&&p.id!==ap?p.id:null;
+  await patch(id,{});
+  const top=ap||id;
+  for(const d of [...ds].reverse()){
+    const dt=S.tasks[d];
+    if(dt.parent!==top){
+      const mq=new URLSearchParams({parent:top});
+      const mr=await api(`/lists/${dt.list}/tasks/${d}/move?${mq}`,{method:'POST'});
+      dt.parent=top;dt.pos=mr.position;
+    }
+    const L=Ls[d];
+    const wantUp=L!==top?L:null;
+    if(dt.up!==wantUp){dt.up=wantUp;await patch(d,{})}
+  }
+}
+async function saveEdit(id,f){
+  const t=S.tasks[id];
+  const parentChanged=(f.parentLp||null)!==(lp(t)||null);
+  Object.assign(t,{title:f.title,notes:f.notes,due:f.due||null,pri:f.pri,tags:f.tags});
+  await patch(id,{});
+  if(f.list!==t.list)await moveList(id,f.list);
+  else if(parentChanged)await reparent(id,f.parentLp||null);
+}
+
+/* ---------- 渲染 ---------- */
+function sorter(){
+  if(S.sort==='due')return(a,b)=>((a.due||'9')<(b.due||'9')?-1:(a.due||'9')>(b.due||'9')?1:byPos(a,b));
+  if(S.sort==='pri')return(a,b)=>(b.pri-a.pri)||byPos(a,b);
+  return byPos;
+}
+const flatSort=(a,b)=>S.sort==='pri'?((b.pri-a.pri)||((a.due||'9')<(b.due||'9')?-1:1)):(((a.due||'9')<(b.due||'9')?-1:(a.due||'9')>(b.due||'9')?1:0)||(b.pri-a.pri));
+function row(t,d,flat){
+  const kids=CH[t.id]||[];
+  const open=!S.collapsed.has(t.id);
+  const od=!t.done&&t.due&&t.due<today();
+  const chips=[];
+  if(t.due)chips.push(`<span class="${od?'od':''}">📅 ${t.due.slice(5).replace('-','/')}</span>`);
+  if(kids.length)chips.push(`<span>☑ ${kids.filter(k=>k.done).length}/${kids.length}</span>`);
+  if(t.notes)chips.push('<span>≡</span>');
+  t.tags.forEach(g=>chips.push(`<span class="tg" data-act="tag" data-v="${esc(g)}">#${esc(g)}</span>`));
+  if(flat){
+    const l=S.lists.find(x=>x.id===t.list);
+    if(l)chips.push(`<span>📁 ${esc(l.title)}</span>`);
+    const pp=lp(t)&&S.tasks[lp(t)];
+    if(pp)chips.push(`<span>↳ ${esc(pp.title)}</span>`);
+  }
+  let h=`<div class="row ${t.done?'done':''}" data-id="${t.id}" style="margin-left:${flat?0:d*22}px">`+
+    `<span class="fold" data-act="fold">${!flat&&kids.length?(open?'▾':'▸'):''}</span>`+
+    `<button class="chk p${t.pri}" data-act="toggle">${t.done?'✓':''}</button>`+
+    `<div class="main" data-act="edit"><div class="title">${esc(t.title)||'（無標題）'}</div>${chips.length?`<div class="meta">${chips.join('')}</div>`:''}</div>`+
+    `<button class="mini" data-act="addsub" title="新增子任務">＋</button></div>`;
+  if(S.sub===t.id)h+=`<div class="subadd" style="margin-left:${flat?0:(d+1)*22}px"><input id="subin" placeholder="子任務標題 · Enter 新增 · Esc 取消 · 可用 #標籤"></div>`;
+  return h;
+}
+function tree(t,d){
+  let h=row(t,d);
+  if(!S.collapsed.has(t.id))(CH[t.id]||[]).filter(shown).forEach(k=>{h+=tree(k,d+1)});
+  return h;
+}
+function listHTML(){
+  const v=S.view,q=S.q.trim().toLowerCase(),td=today();
+  const flat=q||['today','upcoming','tag'].includes(v.t);
+  let h='';
+  if(flat){
+    let L=T().filter(t=>S.done||!t.done);
+    if(q)L=L.filter(t=>(t.title+' '+t.notes+' '+t.tags.map(g=>'#'+g).join(' ')).toLowerCase().includes(q));
+    else if(v.t==='today')L=L.filter(t=>t.due&&t.due<=td);
+    else if(v.t==='upcoming')L=L.filter(t=>t.due&&t.due>td);
+    else L=L.filter(t=>t.tags.includes(v.id));
+    L.sort(flatSort);
+    h=L.map(t=>row(t,0,true)).join('');
+  }else{
+    const ls=v.t==='list'?S.lists.filter(l=>l.id===v.id):S.lists;
+    ls.forEach(l=>{
+      const rs=(CH['']||[]).filter(t=>t.list===l.id&&shown(t));
+      if(v.t==='all'&&rs.length)h+=`<div class="lh">${esc(l.title)}</div>`;
+      rs.forEach(t=>{h+=tree(t,0)});
+    });
+  }
+  return h||'<div class="empty">冇任務 🎉</div>';
+}
+function sideHTML(){
+  const open=T().filter(t=>!t.done),td=today();
+  const n=f=>open.filter(f).length;
+  const it=(vt,vid,label,cnt,ic)=>`<div class="si ${S.view.t===vt&&(S.view.id||'')===(vid||'')?'on':''}" data-act="view" data-vt="${vt}" data-vid="${esc(vid||'')}"><span>${ic} ${esc(label)}</span><i>${cnt||''}</i></div>`;
+  let h=it('all','','全部',open.length,'🗂')+it('today','','今日 / 逾期',n(t=>t.due&&t.due<=td),'☀️')+it('upcoming','','即將到期',n(t=>t.due&&t.due>td),'🗓');
+  h+='<h4>分類 <button class="mini" data-act="newlist" title="新增分類">＋</button></h4>';
+  S.lists.forEach(l=>{h+=it('list',l.id,l.title,n(t=>t.list===l.id),'📁')});
+  const tags={};
+  open.forEach(t=>t.tags.forEach(g=>{tags[g]=(tags[g]||0)+1}));
+  const tk=Object.keys(tags).sort();
+  if(tk.length){h+='<h4>標籤</h4>';tk.forEach(g=>{h+=it('tag',g,'#'+g,tags[g],'🏷')})}
+  return h;
+}
+function render(){
+  CH={};
+  const sf=sorter();
+  T().forEach(t=>{const p=lp(t)||'';(CH[p]||(CH[p]=[])).push(t)});
+  Object.values(CH).forEach(a=>a.sort(sf));
+  if(S.view.t==='list'&&!S.lists.find(l=>l.id===S.view.id))S.view={t:'all',id:''};
+  $('#side').innerHTML=sideHTML();
+  const v=S.view;
+  $('#vt').textContent=S.q.trim()?'搜尋：'+S.q.trim():v.t==='all'?'全部任務':v.t==='today'?'今日 / 逾期':v.t==='upcoming'?'即將到期':v.t==='tag'?'#'+v.id:(S.lists.find(l=>l.id===v.id)||{}).title||'';
+  $('#vacts').innerHTML=v.t==='list'?'<button class="mini" data-act="renlist" title="重新命名">✎</button><button class="mini" data-act="dellist" title="刪除分類">🗑</button>':'';
+  const prev=$('#subin')?$('#subin').value:'';
+  const hadFocus=document.activeElement&&document.activeElement.id==='subin';
+  $('#list').innerHTML=listHTML();
+  const si=$('#subin');
+  if(si){si.value=prev;if(S.focusSub||hadFocus){si.focus();S.focusSub=false}}
+  const sel=$('#ql'),cur=sel.value;
+  const want=v.t==='list'?v.id:(S.lists.find(l=>l.id===cur)?cur:(LS('tt_dl')||(S.lists[0]||{}).id));
+  const key=S.lists.map(l=>l.id+l.title).join('|')+'@'+want;
+  if(sel.dataset.k!==key){sel.innerHTML=S.lists.map(l=>`<option value="${l.id}" ${l.id===want?'selected':''}>${esc(l.title)}</option>`).join('');sel.dataset.k=key}
+  $('#err').textContent=S.err;
+  $('#syncb').style.opacity=S.busy?.4:1;
+  LS('tt_cache',{lists:S.lists,tasks:S.tasks});
+}
+
+/* ---------- 編輯視窗 ---------- */
+function openEdit(id){
+  const t=S.tasks[id];if(!t)return;
+  const ban=new Set([id,...desc(id)]);
+  const popts=list=>'<option value="">（無，最上層）</option>'+T().filter(x=>x.list===list&&!ban.has(x.id)).sort(byPos).map(x=>`<option value="${x.id}" ${x.id===lp(t)?'selected':''}>${esc(x.title)}</option>`).join('');
+  const d=$('#dlg');
+  d.innerHTML=`<label>標題</label><input id="e_title" value="${esc(t.title)}">
+  <label>備註</label><textarea id="e_notes">${esc(t.notes)}</textarea>
+  <div class="grid2"><div><label>到期日</label><input id="e_due" type="date" value="${t.due||''}"></div>
+  <div><label>優先度</label><select id="e_pri">${['無','低','中','高'].map((x,i)=>`<option value="${i}" ${t.pri===i?'selected':''}>${x}</option>`).join('')}</select></div></div>
+  <label>標籤（用逗號或空格分隔）</label><input id="e_tags" value="${esc(t.tags.join(', '))}">
+  <div class="grid2"><div><label>分類（清單）</label><select id="e_list">${S.lists.map(l=>`<option value="${l.id}" ${l.id===t.list?'selected':''}>${esc(l.title)}</option>`).join('')}</select></div>
+  <div><label>上層任務</label><select id="e_par">${popts(t.list)}</select></div></div>
+  <div class="btns"><button class="btn del" id="e_del">刪除</button><span class="sp"></span><button class="btn" id="e_cancel">取消</button><button class="btn pri" id="e_save">儲存</button></div>`;
+  $('#e_list').onchange=()=>{const same=$('#e_list').value===t.list;$('#e_par').disabled=!same;if(!same)$('#e_par').value=''};
+  $('#e_cancel').onclick=()=>d.close();
+  $('#e_del').onclick=()=>{if(confirm('刪除呢個任務同佢嘅所有子任務？')){d.close();run(()=>removeTask(id))}};
+  $('#e_save').onclick=()=>{
+    const f={title:$('#e_title').value.trim()||t.title,notes:$('#e_notes').value.trim(),due:$('#e_due').value,pri:+$('#e_pri').value,
+      tags:[...new Set($('#e_tags').value.split(/[,，\s#]+/).filter(Boolean))],list:$('#e_list').value,parentLp:$('#e_par').value};
+    d.close();run(()=>saveEdit(id,f));
+  };
+  d.showModal();
+}
+
+/* ---------- 事件 ---------- */
+function setView(t,id){S.view={t,id:id||''};S.q='';$('#q').value='';document.body.classList.remove('nav');render()}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-act]');if(!a)return;
+  const act=a.dataset.act,rowEl=a.closest('[data-id]'),id=rowEl&&rowEl.dataset.id;
+  if(act==='view')return setView(a.dataset.vt,a.dataset.vid);
+  if(act==='tag'){e.stopPropagation();return setView('tag',a.dataset.v)}
+  if(act==='fold'){S.collapsed.has(id)?S.collapsed.delete(id):S.collapsed.add(id);LS('tt_col',[...S.collapsed]);return render()}
+  if(act==='toggle'){const t=S.tasks[id];return run(()=>patch(id,{done:!t.done}))}
+  if(act==='edit')return openEdit(id);
+  if(act==='addsub'){S.sub=S.sub===id?null:id;S.focusSub=true;S.collapsed.delete(id);return render()}
+  if(act==='newlist'){const n=prompt('新分類名稱');if(n&&n.trim())run(async()=>{const r=await api('/users/@me/lists',{method:'POST',body:JSON.stringify({title:n.trim()})});S.lists.push(r);S.view={t:'list',id:r.id}});return}
+  if(act==='renlist'){const l=S.lists.find(x=>x.id===S.view.id);const n=prompt('新名稱',l.title);if(n&&n.trim())run(async()=>{l.title=n.trim();await api('/users/@me/lists/'+l.id,{method:'PATCH',body:JSON.stringify({title:l.title})})});return}
+  if(act==='dellist'){const l=S.lists.find(x=>x.id===S.view.id);if(S.lists.length<2)return alert('至少要保留一個分類');
+    if(confirm(`刪除分類「${l.title}」同入面所有任務？無得復原。`))run(async()=>{S.lists=S.lists.filter(x=>x.id!==l.id);T().filter(t=>t.list===l.id).forEach(t=>delete S.tasks[t.id]);S.view={t:'all',id:''};await api('/users/@me/lists/'+l.id,{method:'DELETE'})});return}
+});
+function parseQuick(s){
+  const tags=[];let pri=0;
+  s=s.replace(/(^|\s)#([^\s#]+)/g,(m,a,g)=>{tags.push(g);return a}).replace(/(^|\s)!([1-3])(?=\s|$)/,(m,a,p)=>{pri=+p;return a}).trim();
+  return{title:s,tags,pri};
+}
+$('#add').onsubmit=e=>{
+  e.preventDefault();
+  const{title,tags,pri}=parseQuick($('#qa').value);
+  if(!title)return;
+  const v=S.view;
+  if(v.t==='tag'&&!tags.includes(v.id))tags.push(v.id);
+  const due=$('#qd').value||(v.t==='today'?today():null);
+  const list=$('#ql').value;
+  if(!list)return alert('未有分類');
+  LS('tt_dl',list);$('#qa').value='';
+  run(()=>addTask(list,title,{tags,pri,due}));
+};
+document.addEventListener('keydown',e=>{
+  if(e.target.id==='subin'){
+    if(e.key==='Enter'&&!e.isComposing){
+      const{title,tags,pri}=parseQuick(e.target.value);
+      if(!title)return;
+      const p=S.tasks[S.sub];e.target.value='';S.focusSub=true;
+      run(()=>addTask(p.list,title,{parent:p.id,tags,pri}));
+    }else if(e.key==='Escape'){S.sub=null;render()}
+    return;
+  }
+  if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||''))&&!$('#dlg').open){e.preventDefault();$('#q').focus()}
+});
+$('#q').oninput=e=>{S.q=e.target.value;render()};
+$('#sort').onchange=e=>{S.sort=e.target.value;LS('tt_sort',S.sort);render()};
+$('#done').onchange=e=>{S.done=e.target.checked;LS('tt_done',S.done);render()};
+$('#syncb').onclick=()=>pull(true);
+$('#burger').onclick=()=>document.body.classList.toggle('nav');
+$('#out').onclick=()=>{
+  if(!confirm('登出並清除本機快取？'))return;
+  try{if(token)google.accounts.oauth2.revoke(token)}catch{}
+  token=null;sessionStorage.removeItem('tt_tok');['tt_cache','tt_signed'].forEach(k=>LS(k,null));
+  S.tasks={};S.lists=[];showGate();
+};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&token)pull()});
+setInterval(()=>{if(!document.hidden&&token)pull()},90000);
+
+/* ---------- 啟動 ---------- */
+function showGate(){$('#app').hidden=true;$('#gate').hidden=false;$('#cid').value=cid||''}
+function showApp(){$('#gate').hidden=true;$('#app').hidden=false}
+$('#signin').onclick=async()=>{
+  const v=$('#cid').value.trim();
+  if(!v)return($('#gerr').textContent='請貼上 Client ID');
+  cid=v;LS('tt_cid',cid);$('#gerr').textContent='';
+  try{await gis();await auth(false);showApp();await pull(true)}
+  catch(e){$('#gerr').textContent='登入失敗：'+e.message+'（檢查 Client ID、授權來源同 Test users 設定）'}
+};
+(async function boot(){
+  S.sort=LS('tt_sort')||'manual';S.done=!!LS('tt_done');
+  $('#sort').value=S.sort;$('#done').checked=S.done;
+  if(!cid)return showGate();
+  const c=LS('tt_cache');
+  if(c){S.lists=c.lists||[];S.tasks=c.tasks||{};showApp();render()}
+  try{const[tk,ex]=JSON.parse(sessionStorage.getItem('tt_tok')||'null')||[];if(tk&&Date.now()<ex){token=tk;tokExp=ex}}catch{}
+  if(!LS('tt_signed'))return showGate();
+  try{await gis();await ensure();showApp();await pull(true)}
+  catch(e){if(!c){showGate()}else{showApp();$('#sync').textContent='離線 / 未登入（顯示上次資料）'}}
+})();
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
