@@ -1,5 +1,5 @@
 // TaskPlus service worker：只快取 app 外殼；Google API / 登入請求一律走網絡
-const VER = 'taskplus-v1';
+const VER = 'taskplus-v4';
 const SHELL = [
   './',
   './index.html',

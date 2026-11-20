@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#2f6fed">
+<meta name="theme-color" content="#507f76">
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('tt_settings')||'{}'),t=JSON.parse(localStorage.getItem('tt_theme')||'{}'),m=t.mode||'auto',r=document.documentElement;
+r.dataset.theme=(m==='dark'||(m==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches))?'dark':'light';
+if(s.accent){r.style.setProperty('--accent',s.accent);var n=parseInt(s.accent.slice(1),16);r.style.setProperty('--onbtn',((0.299*(n>>16&255)+0.587*(n>>8&255)+0.114*(n&255))/255>0.62)?'#202020':'#fff')}}catch(e){}})()</script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="TaskPlus">
@@ -14,76 +17,222 @@
 <title>TaskPlus</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-:root{--bg:#fafaf9;--panel:#fff;--tx:#1c1b1a;--mut:#78756f;--bd:#e7e5e0;--ac:#2f6fed;--acs:#e8efff;--red:#d93025;--chip:#f0eeea;--p1:#4c8bf5;--p2:#f29900;--p3:#d93025}
-@media(prefers-color-scheme:dark){:root{--bg:#171716;--panel:#1f1f1e;--tx:#ecebe8;--mut:#9a978f;--bd:#30302e;--ac:#7aa5ff;--acs:#22304f;--red:#ff7b72;--chip:#2a2a28}}
+:root{--bg:#fbfaf7;--side:#f4f2ed;--tx:#3a3b39;--mut:#8c8981;--bd:#e9e6df;--hov:#ece9e2;--accent:#507f76;--onbtn:#fff;--act:color-mix(in srgb,var(--accent) 12%,var(--bg));--ac:color-mix(in srgb,var(--accent) 92%,#000);--btn:var(--accent);--chip:#f0eee8;--card:#fffefc;--inp:#d9d5cc;--tod:#4f8a63;--tom:#a9772f;--wk:#7a6a9a;--od:#b85a52;--shadow:0 12px 40px #00000018;--s1:#5b82a8;--grid:#e6e3dc;--axis:#cfcbc1;--h0:#eeebe4;--h1:#dbe5ec;--h2:#b0c6d8;--h3:#7ea0bd;--h4:#4d6f90}
+:root[data-theme=dark]{--bg:#1c1d1b;--side:#232421;--tx:#e4e2dc;--mut:#98958d;--bd:#31322e;--hov:#2d2e2a;--act:color-mix(in srgb,var(--accent) 22%,var(--bg));--ac:color-mix(in srgb,var(--accent) 60%,#fff);--chip:#292a27;--card:#222320;--inp:#474843;--tod:#8fbf9f;--tom:#d4a85f;--wk:#b3a3d1;--od:#d98a82;--shadow:0 12px 40px #00000066;--s1:#7ea2c6;--grid:#2b2c28;--axis:#3a3b36;--h0:#2c2d29;--h1:#263644;--h2:#34506a;--h3:#4f7499;--h4:#86a9c8}
 *{box-sizing:border-box}
-body{margin:0;font:15px/1.45 system-ui,-apple-system,"PingFang HK","Noto Sans HK","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--tx)}
+html,body{height:100%}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang HK","Noto Sans HK","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--tx)}
 button,input,select,textarea{font:inherit;color:inherit}
-input,select,textarea{background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;outline:none}
-input:focus,select:focus,textarea:focus{border-color:var(--ac)}
-button{cursor:pointer}
+button{cursor:pointer;background:none;border:0;padding:0}
+input,select,textarea{background:var(--bg);border:1px solid var(--inp);border-radius:6px;padding:6px 8px;outline:none;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--mut)}
+svg{flex:none;display:block}
+a{color:inherit;text-decoration:none}
 [hidden]{display:none!important}
-#app{display:flex;height:100vh;height:100dvh;padding-top:env(safe-area-inset-top)}
-#list{padding-bottom:calc(80px + env(safe-area-inset-bottom))!important}
-#side{width:250px;flex:none;background:var(--panel);border-right:1px solid var(--bd);padding:14px 10px;overflow:auto}
-#side h4{margin:18px 8px 6px;font-size:12px;color:var(--mut);font-weight:600;display:flex;justify-content:space-between;align-items:center}
-.si{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;cursor:pointer;gap:8px}
-.si span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.si i{font-style:normal;font-size:12px;color:var(--mut)}
-.si:hover{background:var(--chip)}.si.on{background:var(--acs);color:var(--ac);font-weight:600}
-#main{flex:1;min-width:0;display:flex;flex-direction:column}
-header{display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bd);background:var(--panel);flex-wrap:wrap}
-header h1{font-size:18px;margin:0;margin-right:auto}
-header input[type=search]{width:220px}
-header label{font-size:13px;color:var(--mut);display:flex;gap:4px;align-items:center;white-space:nowrap}
-.mini{background:none;border:0;padding:2px 7px;border-radius:6px;color:var(--mut);font-size:15px}
-.mini:hover{background:var(--chip);color:var(--tx)}
-#burger{display:none}
-#sync{font-size:12px;color:var(--mut)}
-#add{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap}
-#add #qa{flex:1;min-width:180px}
-#add button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:7px 16px}
-#err{color:var(--red);padding:0 16px;font-size:13px}
-#list{flex:1;overflow:auto;padding:0 16px 80px}
-.lh{font-size:13px;color:var(--mut);margin:18px 0 4px;font-weight:600}
-.row{display:flex;align-items:flex-start;gap:6px;padding:7px 6px;border-bottom:1px solid var(--bd)}
-.row:hover{background:var(--chip)}
-.fold{width:16px;flex:none;text-align:center;color:var(--mut);cursor:pointer;user-select:none;margin-top:1px}
-.chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--mut);background:none;flex:none;margin-top:1px;padding:0;font-size:12px;line-height:14px;color:#fff}
-.chk.p1{border-color:var(--p1)}.chk.p2{border-color:var(--p2)}.chk.p3{border-color:var(--p3)}
-.row.done .chk{background:var(--mut);border-color:var(--mut)}
-.row.done .title{text-decoration:line-through;color:var(--mut)}
-.main{flex:1;min-width:0;cursor:pointer}
-.title{word-break:break-word}
-.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;font-size:12px;color:var(--mut)}
-.meta span{background:var(--chip);border-radius:10px;padding:0 8px}
-.meta .od{color:var(--red)}
-.meta .tg{color:var(--ac);cursor:pointer}
-.subadd{padding:6px 0 6px 44px}
-.subadd input{width:100%}
-.empty{text-align:center;color:var(--mut);padding:60px 0}
-dialog{border:1px solid var(--bd);border-radius:14px;background:var(--panel);color:var(--tx);width:min(520px,94vw);padding:20px}
-dialog::backdrop{background:#0006}
-dialog label{display:block;font-size:12px;color:var(--mut);margin:12px 0 4px}
-dialog input,dialog select,dialog textarea{width:100%}
-dialog textarea{min-height:90px;resize:vertical}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btns{display:flex;gap:8px;margin-top:18px}
-.btns .sp{flex:1}
-.btn{border:1px solid var(--bd);background:var(--panel);border-radius:8px;padding:7px 16px}
-.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
-.btn.del{color:var(--red)}
+.sp{flex:1}
+.ibtn{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;color:var(--mut);flex:none}
+.ibtn:hover{background:var(--hov);color:var(--tx)}
+.btn{border-radius:6px;padding:6px 14px;background:var(--chip);font-weight:500}
+.btn:hover{filter:brightness(.95)}
+.btn.red{background:var(--btn);color:var(--onbtn)}
+.btn.red:disabled{opacity:.4;cursor:default;filter:none}
+
+/* ---- 登入頁 ---- */
 #gate{max-width:520px;margin:8vh auto;padding:24px}
 #gate h1{margin:0 0 8px}
 #gate p,#gate li{color:var(--mut)}
 #gate input{width:100%;margin:8px 0}
-#gate .btn{margin-top:6px}
-details{margin:14px 0}
+#gate details{margin:14px 0}
+
+/* ---- 版面 ---- */
+#app{display:flex;height:100vh;height:100dvh}
+#side{width:280px;flex:none;background:var(--side);display:flex;flex-direction:column;padding:12px 8px 0;padding-top:max(12px,env(safe-area-inset-top));overflow:auto}
+.sbtop{display:flex;align-items:center;padding:2px 8px 10px}
+.brand{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.logo{width:22px;height:22px;border-radius:6px;background:var(--btn);color:var(--onbtn);display:grid;place-items:center}
+.addbtn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border-radius:6px;color:var(--ac);font-weight:600;margin-bottom:2px}
+.addbtn:hover{background:var(--hov)}
+.addbtn .plus{width:22px;height:22px;border-radius:50%;background:var(--btn);color:var(--onbtn);display:grid;place-items:center}
+.ni{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:6px;cursor:pointer;min-height:32px}
+.ni:hover{background:var(--hov)}
+.ni.on{background:var(--act);color:var(--ac);font-weight:600}
+.ni .ic{display:grid;place-items:center;width:18px;color:var(--mut)}
+.ni .hs{font-weight:600;font-size:16px;line-height:1}
+.ni .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ni .ct{font-size:12px;color:var(--mut);font-weight:400}
+.sh{display:flex;align-items:center;gap:2px;margin:14px 0 2px;padding:0 4px 0 8px;color:var(--mut);font-weight:600;font-size:13px;cursor:pointer;min-height:28px}
+.sh .t{flex:1}
+.sh .chev{transform:rotate(90deg);transition:.15s;display:grid;place-items:center;width:24px}
+.sh.c .chev{transform:none}
+.sbfoot{position:sticky;bottom:0;margin-top:auto;background:var(--side);display:flex;align-items:center;gap:2px;padding:8px 6px;padding-bottom:max(8px,env(safe-area-inset-bottom));font-size:12px;color:var(--mut)}
+#scrim{display:none}
+#main{flex:1;min-width:0;overflow:auto;position:relative}
+.topbar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;gap:6px;padding:8px 16px;padding-top:max(8px,env(safe-area-inset-top));min-height:46px}
+.topbar select{border:0;background:none;color:var(--mut);padding:4px;cursor:pointer}
+.topbar label{display:flex;gap:4px;align-items:center;color:var(--mut);font-size:13px;white-space:nowrap}
+#burger{display:none}
+.wrap{width:100%;max-width:800px;margin:0 auto;padding:6px 40px 140px}
+.h1row{display:flex;align-items:center;gap:4px}
+#vacts{display:flex;gap:2px;margin-top:4px}
+h1{font-size:26px;line-height:1.3;margin:6px 0 2px;font-weight:600;letter-spacing:.01em}
+.vsub{color:var(--mut);font-size:13px;margin-bottom:14px;display:flex;gap:6px;align-items:center;min-height:20px}
+#q{width:100%;margin:6px 0 10px;padding:10px 12px;font-size:15px;border-radius:8px}
+#err{color:var(--od);font-size:13px;margin:4px 0}
+.gh{display:flex;align-items:baseline;gap:6px;margin:18px 0 0;padding:0 0 6px;border-bottom:1px solid var(--bd);font-weight:700;font-size:14px}
+.gh small{color:var(--mut);font-weight:400;font-size:12px}
+.gh.od{color:var(--od)}
+
+/* ---- 任務列 ---- */
+.p0{--pc:#9a978f}.p1{--pc:#5a7694}.p2{--pc:#c98b47}.p3{--pc:#c4605a}
+.row{display:flex;align-items:flex-start;gap:6px;padding:8px 0;border-bottom:1px solid var(--bd);position:relative}
+.fold{width:16px;height:22px;display:grid;place-items:center;color:var(--mut);cursor:pointer;flex:none}
+.fold svg{transition:.12s}
+.fold.open svg{transform:rotate(90deg)}
+.chk{width:20px;height:20px;margin-top:1px;border-radius:50%;border:2px solid var(--pc);background:color-mix(in srgb,var(--pc) 8%,transparent);display:grid;place-items:center;color:var(--pc);flex:none;padding:0}
+.chk svg{opacity:0;transition:.1s}
+.chk:hover svg{opacity:.7}
+.row.done .chk,.chk.on{background:var(--mut);border-color:var(--mut);color:#fff}
+.row.done .chk svg,.chk.on svg{opacity:1}
+.body{flex:1;min-width:0;cursor:pointer}
+.title{word-break:break-word}
+.row.done .title{text-decoration:line-through;color:var(--mut)}
+.desc{color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta,.hint{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:12px;color:var(--mut);align-items:center}
+.meta{margin-top:2px}
+.m{display:inline-flex;align-items:center;gap:3px}
+.m.tod{color:var(--tod)}.m.tom{color:var(--tom)}.m.wk{color:var(--wk)}.m.od{color:var(--od)}
+.m.lb{cursor:pointer}.m.lb:hover{text-decoration:underline}
+.proj{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--mut);align-self:flex-end;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acts{display:flex;opacity:0;position:absolute;right:0;top:6px;background:var(--bg);padding-left:6px}
+.row:hover .acts{opacity:1}
+@media(hover:none){.acts{display:none}}
+.empty{text-align:center;color:var(--mut);padding:70px 0;line-height:1.8}
+.empty b{display:block;font-size:16px;color:var(--tx)}
+.addrow{display:flex;align-items:center;gap:8px;color:var(--mut);padding:10px 0;cursor:pointer;width:100%}
+.addrow .plus{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:var(--ac)}
+.addrow:hover{color:var(--ac)}
+.addrow:hover .plus{background:var(--btn);color:var(--onbtn)}
+
+/* ---- 新增表單 ---- */
+.af{border:1px solid var(--inp);border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--card)}
+.af input.t{width:100%;border:0;padding:2px 0;font-size:16px;font-weight:600;background:none}
+.af input.d{width:100%;border:0;padding:2px 0;font-size:13px;background:none}
+.af .hint{min-height:20px;margin:2px 0}
+.af .r{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.af .r input,.af .r select{font-size:13px;padding:4px 8px}
+.af .f{display:flex;gap:8px;align-items:center;border-top:1px solid var(--bd);padding-top:10px}
+.af .f select{border:0;background:none;max-width:180px;padding:4px;cursor:pointer}
+
+/* ---- 對話框 ---- */
+dialog{border:0;border-radius:12px;background:var(--card);color:var(--tx);padding:0;box-shadow:var(--shadow);max-width:94vw}
+dialog::backdrop{background:#0006}
+#adlg{width:min(560px,94vw);margin-top:12vh;margin-bottom:auto}
+#adlg .af{border:0;margin:0;padding:14px 16px}
+#dlg{width:min(780px,94vw)}
+.dg{display:grid;grid-template-columns:1fr 230px;min-height:340px}
+.dl{padding:18px 20px;min-width:0}
+.dr{background:var(--side);padding:12px 16px;border-radius:0 12px 0 0}
+.dr label{display:block;font-size:12px;color:var(--mut);font-weight:600;margin:10px 0 4px}
+.dr input,.dr select{width:100%}
+.dtitle{display:flex;gap:10px;align-items:flex-start}
+.dtitle input{flex:1;border:0;font-size:18px;font-weight:600;padding:0 0 2px;background:none}
+.dnotes{border:0;background:none;min-height:70px;resize:vertical;margin:6px 0 0 30px;width:calc(100% - 30px);padding:2px 0}
+.dsubh{font-weight:600;margin:14px 0 2px;font-size:13px}
+#e_subin{width:100%;border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:8px 0;background:none}
+.dfoot{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--bd)}
+.dfoot .del{color:var(--od)}
+#fab{display:none;position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:50%;background:var(--btn);color:var(--onbtn);box-shadow:0 4px 14px #0004;z-index:9;place-items:center}
+
+/* ---- 習慣 / 統計 ---- */
+body[data-v=habits] #sort,body[data-v=habits] .topbar label,body[data-v=stats] #sort,body[data-v=stats] .topbar label{display:none}
+.pbar{display:inline-block;width:90px;height:6px;border-radius:3px;background:color-mix(in srgb,var(--c) 20%,transparent);overflow:hidden;margin-left:4px}
+.pbar i{display:block;height:100%;background:var(--c)}
+.hrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.hrow{--hc:var(--mut)}
+.hchk{width:28px;height:28px;border-radius:50%;border:2px solid var(--hc);display:grid;place-items:center;color:#fff;flex:none;background:color-mix(in srgb,var(--hc) 10%,transparent)}
+.hchk svg{opacity:0}.hchk.on{background:var(--hc)}.hchk.on svg{opacity:1}.hchk:hover svg{opacity:.6}.hchk.on:hover svg{opacity:1}
+.hbody{flex:1;min-width:0;cursor:pointer}
+.strip{display:flex;gap:5px}
+.sd{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--mut)}
+.sd.td span{color:var(--tx);font-weight:700}
+.dd{width:16px;height:16px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--hc) 50%,transparent);padding:0}
+.dd.on{background:var(--hc);border-color:var(--hc)}
+.dd.nd{opacity:.3}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);grid-auto-columns:12px;gap:2px;padding-bottom:4px}
+.hc{display:block;width:12px;height:12px;border-radius:3px;background:var(--h0);padding:0;border:0}
+.hc.on{background:var(--hc)}.hc.fut{background:none}
+.hc.l1{background:var(--h1)}.hc.l2{background:var(--h2)}.hc.l3{background:var(--h3)}.hc.l4{background:var(--h4)}
+.hlg{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--mut);margin-top:4px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 4px}
+.cards.c4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:560px){.cards,.cards.c4{grid-template-columns:repeat(2,1fr)}}
+.card{border:1px solid var(--bd);border-radius:10px;padding:10px 12px;background:var(--card)}
+.card .lb,.card .sb{font-size:12px;color:var(--mut)}
+.card .v{font-size:26px;font-weight:600;line-height:1.25}
+.seg{display:inline-flex;border:1px solid var(--inp);border-radius:8px;overflow:hidden}
+.seg button{padding:4px 14px;color:var(--mut)}
+.seg button.on{background:var(--act);color:var(--ac);font-weight:600}
+.sec-h{font-size:15px;font-weight:700;margin:28px 0 8px}
+.sec-h small{font-weight:400;color:var(--mut);font-size:12px;margin-left:8px}
+.prow{display:grid;grid-template-columns:minmax(70px,150px) 1fr auto;gap:12px;align-items:center;padding:7px 0;cursor:pointer}
+.prow:hover .nm{text-decoration:underline}
+.prow .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .pv{font-size:12px;color:var(--mut);white-space:nowrap}
+.meter{height:8px;border-radius:4px;background:color-mix(in srgb,var(--c) 20%,transparent);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--c);border-radius:4px}
+.lnk{color:var(--ac);text-decoration:underline}
+details.tbl{margin-top:8px;font-size:12px;color:var(--mut)}
+details.tbl table{border-collapse:collapse;margin-top:6px}
+details.tbl td,details.tbl th{padding:2px 14px 2px 0;text-align:left;font-weight:400}
+#tip{position:fixed;z-index:100;background:var(--tx);color:var(--bg);padding:4px 8px;border-radius:6px;font-size:12px;pointer-events:none;white-space:nowrap}
+.bigin{width:100%;border:0;border-bottom:1px solid var(--bd);border-radius:0;font-size:18px;font-weight:600;padding:6px 0;background:none}
+.bigin2{width:100%;border:0;border-radius:0;padding:6px 0;background:none;color:var(--mut)}
+.fl{font-size:12px;color:var(--mut);font-weight:600;margin:14px 0 6px}
+.sws{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:22px;height:22px;border-radius:50%}
+.sw.on{outline:2px solid var(--tx);outline-offset:2px}
+.chips{display:flex;gap:6px;margin-top:8px}
+.chip{width:34px;height:34px;border-radius:50%;background:var(--chip)}
+.chip.on{background:var(--btn);color:var(--onbtn)}
+#h_n{margin-top:8px}
+/* ---- 月曆 / 顏色 ---- */
+.calh{display:flex;align-items:center;gap:4px;margin:10px 0}
+.calh b{flex:1;text-align:center;font-size:15px}
+.flip svg{transform:rotate(180deg)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wh{font-size:11px;color:var(--mut);text-align:center;padding:2px 0}
+.cd{aspect-ratio:1;max-width:52px;width:100%;justify-self:center;border-radius:6px;display:grid;place-items:center;font-size:13px;background:var(--chip);color:var(--tx);padding:0}
+.cd.on{background:var(--hc);color:#fff;font-weight:600}
+.cd.nd{opacity:.45}
+.cd.fut{opacity:.3;cursor:default;background:none}
+.cd.td{box-shadow:inset 0 0 0 2px var(--tx)}
+.cdd{aspect-ratio:1;overflow:hidden;border:1px solid var(--bd);border-radius:6px;padding:4px 6px;text-align:left;display:flex;flex-direction:column;gap:4px;background:var(--card);align-items:flex-start}
+.cdd:hover{background:var(--hov)}
+.cdd .n{font-size:12px;color:var(--mut);min-width:20px;height:20px;display:grid;place-items:center}
+.cdd.td .n{background:var(--btn);color:var(--onbtn);border-radius:4px;font-weight:600}
+.cdd.fut{opacity:.45}
+.cdd.full{background:color-mix(in srgb,var(--tod) 14%,var(--card))}
+.dots{display:flex;flex-wrap:wrap;gap:3px}
+.dots i{width:8px;height:8px;border-radius:2px;display:block}
+.dots i.miss{background:none;box-sizing:border-box;border:1.5px solid color-mix(in srgb,var(--c) 55%,transparent)}
+.calh,.cal,.calsum,.legend{max-width:640px}
+.calsum{margin-top:10px;font-size:13px;color:var(--mut)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:12px;color:var(--mut)}
+.lgd{width:8px;height:8px;border-radius:2px;display:inline-block}
+.lgd.miss{border:1.5px solid var(--mut)}
+.sw.custom{background:conic-gradient(#f44,#fb0,#7c4,#2bd,#47f,#b4e,#f44);position:relative;overflow:hidden;display:inline-block}
+.sw.custom input{position:absolute;inset:-6px;width:36px;height:36px;opacity:0;cursor:pointer;padding:0;border:0}
+@media(max-width:560px){.cdd{padding:3px 4px;gap:2px}.dots{gap:2px}.dots i{width:6px;height:6px}.cdd .n{font-size:11px;min-width:16px;height:16px}.strip{display:none}}
 @media(max-width:760px){
- #burger{display:block}
- #side{position:fixed;inset:0 auto 0 0;z-index:20;transform:translateX(-100%);transition:.2s;box-shadow:none}
+ #burger{display:grid}
+ #side{position:fixed;inset:0 auto 0 0;z-index:30;transform:translateX(-102%);transition:.2s;width:min(300px,86vw)}
  body.nav #side{transform:none;box-shadow:4px 0 24px #0005}
- header input[type=search]{width:100%;order:9}
+ body.nav #scrim{display:block;position:fixed;inset:0;background:#0004;z-index:20}
+ .wrap{padding:4px 16px 140px}
+ #fab{display:grid}
+ .dg{grid-template-columns:1fr}
+ .dr{border-radius:0}
+ h1{font-size:22px}
 }
 </style>
 </head>
@@ -91,53 +240,59 @@ details{margin:14px 0}
 
 <div id="gate" hidden>
   <h1>TaskPlus</h1>
-  <p>加強版 Google Tasks：分類、標籤、優先度、搜尋、多層子任務，全部同步返 Google Tasks（Google 日曆都睇到）。</p>
+  <p>加強版 Google Tasks：收件匣、今日、即將到期、專案、標籤、優先度、多層子任務，全部同步返 Google Tasks（Google 日曆都睇到）。</p>
   <label>Google OAuth Client ID</label>
   <input id="cid" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
-  <button class="btn pri" id="signin">儲存並用 Google 登入</button>
-  <div id="gerr" style="color:var(--red);font-size:13px;margin-top:8px"></div>
+  <button class="btn red" id="signin">儲存並用 Google 登入</button>
+  <div id="gerr" style="color:var(--od);font-size:13px;margin-top:8px"></div>
   <details>
     <summary>第一次用？點樣攞 Client ID</summary>
     <ol>
       <li>去 console.cloud.google.com 開一個新 Project。</li>
       <li>「API 和服務」→「程式庫」→ 啟用 <b>Google Tasks API</b>。</li>
-      <li>「OAuth 同意畫面」→ 揀 External，Publishing status 保持 Testing，喺 Test users 加你自己嘅 Gmail。</li>
+      <li>設定 OAuth 同意畫面：對象揀「外部」，保持測試中，喺「測試使用者」加你自己嘅 Gmail。</li>
       <li>「憑證」→ 建立憑證 → OAuth 用戶端 ID → 類型 <b>網頁應用程式</b>。</li>
-      <li>「已授權的 JavaScript 來源」加 <code>http://localhost:8000</code>（或你部署嘅網址）。</li>
-      <li>複製 Client ID 貼上面。</li>
+      <li>「已授權的 JavaScript 來源」加你部署嘅網域（例如 <code>https://你的名.github.io</code>）。</li>
+      <li>複製用戶端 ID 貼上面。</li>
     </ol>
-    <p>用 <code>python3 -m http.server 8000</code> 喺呢個檔案所在資料夾開 server，然後瀏覽 http://localhost:8000。</p>
   </details>
 </div>
 
 <div id="app" hidden>
-  <aside id="side"></aside>
-  <section id="main">
-    <header>
-      <button id="burger" class="mini">☰</button>
-      <h1 id="vt"></h1>
-      <span id="vacts"></span>
-      <input id="q" type="search" placeholder="搜尋標題、備註、標籤（按 / ）">
-      <select id="sort">
+  <aside id="side">
+    <div class="sbtop"><div class="brand"><span class="logo" data-ic="check" data-s="14"></span>TaskPlus</div></div>
+    <div id="nav"></div>
+    <div class="sbfoot"><span id="sync"></span><span class="sp"></span>
+      <button id="setb" class="ibtn" title="外觀設定" data-ic="gear" data-s="16"></button>
+      <button id="syncb" class="ibtn" title="立即同步" data-ic="sync" data-s="16"></button>
+      <button id="out" class="ibtn" title="登出" data-ic="out" data-s="16"></button></div>
+  </aside>
+  <div id="scrim"></div>
+  <main id="main">
+    <div class="topbar">
+      <button id="burger" class="ibtn" data-ic="menu" data-s="20"></button>
+      <span class="sp"></span>
+      <select id="sort" title="排序">
         <option value="manual">手動排序</option>
         <option value="due">按到期日</option>
         <option value="pri">按優先度</option>
       </select>
-      <label><input type="checkbox" id="done"> 顯示已完成</label>
-      <a class="mini" href="https://calendar.google.com/calendar/u/0/r" target="_blank" rel="noopener" title="開 Google 日曆">📅</a>
-      <button id="syncb" class="mini" title="立即同步">⟳</button><span id="sync"></span>
-      <button id="out" class="mini" title="登出">⏻</button>
-    </header>
-    <form id="add">
-      <input id="qa" placeholder="新增任務…  例：交報告 #工作 !2　（#標籤　!1–3 優先度）" autocomplete="off">
-      <input id="qd" type="date">
-      <select id="ql"></select>
-      <button>新增</button>
-    </form>
-    <div id="err"></div>
-    <div id="list"></div>
-  </section>
+      <label><input type="checkbox" id="done"> 已完成</label>
+      <a class="ibtn" href="https://calendar.google.com/calendar/u/0/r" target="_blank" rel="noopener" title="開 Google 日曆" data-ic="cal"></a>
+    </div>
+    <div class="wrap">
+      <div class="h1row"><h1 id="vt"></h1><span id="vacts"></span></div>
+      <div class="vsub" id="vsub"></div>
+      <input id="q" type="search" placeholder="搜尋標題、描述、標籤…" hidden>
+      <div id="err"></div>
+      <div id="list"></div>
+      <div id="inlineadd"></div>
+    </div>
+  </main>
+  <button id="fab" data-ic="plus" data-s="26" aria-label="新增任務"></button>
 </div>
+<div id="tip" hidden></div>
+<dialog id="adlg"></dialog>
 <dialog id="dlg"></dialog>
 
 <script>
@@ -145,10 +300,109 @@ const SCOPE='https://www.googleapis.com/auth/tasks';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const LS=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch{}};
-const S={lists:[],tasks:{},view:{t:'all',id:''},q:'',done:false,sort:'manual',collapsed:new Set(LS('tt_col')||[]),sub:null,focusSub:false,busy:0,err:'',synced:null};
+const S={lists:[],tasks:{},defId:null,view:LS('tt_view')||{t:'today',id:''},q:'',done:false,sort:'manual',
+  collapsed:new Set(LS('tt_col')||[]),sec:LS('tt_sec')||{proj:true,labels:true},adding:false,busy:0,err:'',synced:null,rs:null,habits:[],dataId:null,range:LS('tt_range')||30,hdlg:null,settings:LS('tt_settings')||{accent:'#507f76',projColors:{}},hmode:LS('tt_hmode')||'list',calYm:null,setId:null,dayD:null};
+if(S.view.t==='search')S.view={t:'today',id:''};
 let cid=LS('tt_cid'),token=null,tokExp=0,authP=null,CH={};
-const today=()=>new Date().toLocaleDateString('sv');
 const byPos=(a,b)=>a.pos<b.pos?-1:a.pos>b.pos?1:0;
+
+/* ---------- 圖示 ---------- */
+const IC={
+ inbox:'<path d="M4 13l2.5-7.5A1.5 1.5 0 018 4.5h8a1.5 1.5 0 011.5 1L20 13v5a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 014 18v-5zM4 13h4.5l1 2h5l1-2H20"/>',
+ upcoming:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M8 14h2M14 14h2"/>',
+ search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ tag:'<path d="M3.5 12.5V5a1.5 1.5 0 011.5-1.5h7.5l8 8a1.5 1.5 0 010 2.1l-6.9 6.9a1.5 1.5 0 01-2.1 0l-8-8z"/><circle cx="8" cy="8" r="1.2"/>',
+ chev:'<path d="M9 6l6 6-6 6"/>',
+ cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
+ sub:'<path d="M6 4v8a3 3 0 003 3h9M15 12l3 3-3 3"/>',
+ trash:'<path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/>',
+ edit:'<path d="M5 19l1-4L16.5 4.5a2 2 0 012.8 2.8L9 18z"/>',
+ menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+ sync:'<path d="M20 11a8 8 0 00-14.5-4M4 5v4h4M4 13a8 8 0 0014.5 4M20 19v-4h-4"/>',
+ out:'<path d="M14 4h4a2 2 0 012 2v12a2 2 0 01-2 2h-4M10 8l-4 4 4 4M6 12h10"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ habit:'<path d="M20 12a8 8 0 11-3-6.2M20 4v4h-4M8.5 12.5l2.5 2.5 4.5-5"/>',
+ chart:'<path d="M5 20V11M12 20V4M19 20v-6"/>',
+ gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/>',
+ flame:'<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 01-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-6 1-9z"/>'
+};
+const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const icToday=()=>`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><text x="12" y="16.3" text-anchor="middle" font-size="9.5" font-weight="700" fill="currentColor" stroke="none" font-family="system-ui,sans-serif">${new Date().getDate()}</text></svg>`;
+document.querySelectorAll('[data-ic]').forEach(e=>{e.innerHTML=ic(e.dataset.ic,+e.dataset.s||18)});
+const PAL=['#c4605a','#c98b47','#b9a04a','#8fae6b','#5f8f6e','#5fa39a','#4f8a9a','#6a95b8','#6f84b8','#8f7cb5','#a77bab','#c27d9b'];
+const pcol=id=>(S.settings.projColors&&S.settings.projColors[id])||PAL[[...String(id)].reduce((a,c)=>a+c.charCodeAt(0),0)%PAL.length];
+const PRC=['#9a978f','#5a7694','#c98b47','#c4605a'];
+const lname=l=>l.id===S.defId?'收件匣':l.title;
+
+/* ---------- 日期 ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>ymd(new Date());
+const pd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c,12)};
+const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return ymd(d)};
+const diffD=(a,b)=>Math.round((pd(b)-pd(a))/864e5);
+const WD=['日','一','二','三','四','五','六'];
+const wdName=s=>'星期'+WD[pd(s).getDay()];
+const md=s=>{const p=s.split('-').map(Number);return p[1]+'月'+p[2]+'日'};
+function dueInfo(s,done){
+  const df=diffD(today(),s);let text,cls='';
+  if(df===0){text='今日';cls='tod'}
+  else if(df===1){text='明日';cls='tom'}
+  else if(df===-1){text='昨日';cls='od'}
+  else if(df<0){text=md(s);cls='od'}
+  else if(df<7){text=wdName(s);cls='wk'}
+  else text=md(s)+(s.slice(0,4)!==today().slice(0,4)?' '+s.slice(0,4):'');
+  return{text,cls:done?'':cls};
+}
+const WDN={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'日':0,'天':0};
+const EWD={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+const MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+function nextWd(w,nextWeek){
+  const t=today(),cur=pd(t).getDay();
+  let n=(w-cur+7)%7;if(n===0)n=7;
+  if(nextWeek){const toMon=((1-cur+7)%7)||7;n=toMon+((w+6)%7)}
+  return addD(t,n);
+}
+function mdDate(m,d){
+  if(m<1||m>12||d<1||d>31)return null;
+  const y=new Date().getFullYear();let s=y+'-'+pad(m)+'-'+pad(d);
+  if(s<today())s=(y+1)+'-'+pad(m)+'-'+pad(d);
+  return s;
+}
+function parseDate(s){
+  const t=today();
+  const cut=(re,f)=>{const r=s.match(re);if(!r)return null;const v=f(r);if(!v)return null;s=s.slice(0,r.index)+' '+s.slice(r.index+r[0].length);return v};
+  const mre='(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*';
+  const due=
+   cut(/\b(\d{4}-\d{2}-\d{2})\b/,r=>r[1])||
+   cut(/(今日|今天|\btoday\b)/i,()=>t)||
+   cut(/(聽日|明日|明天|\btomorrow\b|\btmrw?\b)/i,()=>addD(t,1))||
+   cut(/(大後日|大後天|後日|後天)/,r=>addD(t,r[1][0]==='大'?3:2))||
+   cut(/(\d+)\s*(?:日|天)後/,r=>addD(t,+r[1]))||
+   cut(/\bin\s+(\d+)\s+days?\b/i,r=>addD(t,+r[1]))||
+   cut(/下(?:個)?(?:星期|週|周|禮拜|礼拜)([一二三四五六日天])/,r=>nextWd(WDN[r[1]],true))||
+   cut(/(?:呢個|這個|今個|本|這)?(?:星期|週|周|禮拜|礼拜)([一二三四五六日天])/,r=>nextWd(WDN[r[1]],false))||
+   cut(/\bnext\s+(mon|tue|wed|thu|fri|sat|sun)[a-z]*\b/i,r=>nextWd(EWD[r[1].toLowerCase()],true))||
+   cut(/\b(mon(?:day)?|tue(?:s|sday)?|wed(?:nesday)?|thu(?:r|rs|rsday)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?)\b/i,r=>nextWd(EWD[r[1].slice(0,3).toLowerCase()],false))||
+   cut(/(\d{1,2})月(\d{1,2})[日號号]?/,r=>mdDate(+r[1],+r[2]))||
+   cut(new RegExp('\\b(\\d{1,2})\\s*'+mre+'\\b','i'),r=>mdDate(MON[r[2].toLowerCase()],+r[1]))||
+   cut(new RegExp('\\b'+mre+'\\s*(\\d{1,2})\\b','i'),r=>mdDate(MON[r[1].toLowerCase()],+r[2]));
+  return{due:due||null,s};
+}
+function parseQuick(raw){
+  const r={tags:[],pri:null,list:null,due:null};
+  let s=' '+raw+' ';
+  s=s.replace(/\s@([^\s@#]+)(?=\s)/g,(m,g)=>{r.tags.push(g);return ' '});
+  s=s.replace(/\s#([^\s@#]+)(?=\s)/g,(m,n)=>{
+    const k=n.toLowerCase();
+    const l=['inbox','收件匣','收件箱'].includes(k)?S.lists.find(x=>x.id===S.defId):S.lists.find(x=>x.title.replace(/\s+/g,'').toLowerCase()===k);
+    if(l){r.list=l.id;return ' '}return m});
+  s=s.replace(/\s[pP]([1-4])(?=\s)/,(m,n)=>{r.pri=4-n;return ' '});
+  const d=parseDate(s);r.due=d.due;s=d.s;
+  r.title=s.replace(/\s+/g,' ').trim()||raw.trim();
+  return r;
+}
 
 /* ---------- 資料模型：標籤/優先度/深層子任務存喺備註尾 [[tt:{...}]] ---------- */
 const MRE=/(?:\n\n)?\[\[tt:(\{.*?\})\]\]\s*$/s;
@@ -157,7 +411,8 @@ function norm(t,list){
   const m=notes.match(MRE);
   if(m){try{meta=JSON.parse(m[1])}catch{}notes=notes.slice(0,m.index)}
   return{id:t.id,list,title:t.title||'',notes,tags:meta.tags||[],pri:meta.pri||0,up:meta.up||null,
-    done:t.status==='completed',due:t.due?t.due.slice(0,10):null,parent:t.parent||null,pos:t.position||'',updated:t.updated};
+    done:t.status==='completed',srvDone:t.status==='completed',completedAt:t.completed||null,
+    due:t.due?t.due.slice(0,10):null,parent:t.parent||null,pos:t.position||'',updated:t.updated};
 }
 function enc(t){
   const m={};
@@ -193,22 +448,28 @@ async function api(p,o={},retry=true){
 }
 
 /* ---------- 同步 ---------- */
+const dlgOpen=()=>$('#dlg').open||$('#adlg').open;
 async function pull(force){
-  if(!force&&(S.busy||$('#dlg').open))return;
+  if(!force&&(S.busy||dlgOpen()))return;
   $('#sync').textContent='同步中…';
   try{
     await ensure();
-    const ls=(await api('/users/@me/lists?maxResults=100')).items||[];
-    const all={};
+    const[ls,def]=await Promise.all([
+      api('/users/@me/lists?maxResults=100').then(d=>d.items||[]),
+      api('/users/@me/lists/@default').catch(()=>null)]);
+    const all={},hs=[];let dataId=null,remote=null,setId=null;
     await Promise.all(ls.map(async l=>{
       let pt,items=[];
       do{const d=await api(`/lists/${l.id}/tasks?maxResults=100&showCompleted=true&showHidden=true`+(pt?'&pageToken='+pt:''));
         items.push(...(d.items||[]));pt=d.nextPageToken}while(pt);
+      if(l.title===DATA_TITLE){dataId=l.id;items.forEach(t=>{if(t.title===SETTINGS_TITLE){try{remote=JSON.parse(t.notes||'{}')}catch{}setId=t.id;return}const h=parseHabit(t);if(h)hs.push(h)});return}
       items.forEach(t=>{all[t.id]=norm(t,l.id)});
     }));
-    if(!force&&S.busy)return;
-    S.lists=ls;S.tasks=all;S.synced=new Date();S.err='';
-    LS('tt_cache',{lists:ls,tasks:all});
+    if(!force&&(S.busy||dlgOpen()))return;
+    S.lists=ls.filter(l=>l.id!==dataId);S.tasks=all;S.dataId=dataId;S.habits=hs.sort(byPos);S.setId=setId;
+    if(remote&&(remote.accent||remote.projColors)){S.settings={accent:remote.accent||'#507f76',projColors:remote.projColors||{}};LS('tt_settings',S.settings);applyTheme()}
+    S.synced=new Date();S.err='';
+    S.defId=def&&S.lists.find(l=>l.id===def.id)?def.id:(S.lists[0]||{}).id;
     $('#sync').textContent='已同步 '+S.synced.toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit'});
     render();
   }catch(e){$('#sync').textContent='同步失敗';S.err=e.message;render()}
@@ -225,7 +486,7 @@ async function addTask(list,title,o={}){
   const par=o.parent?S.tasks[o.parent]:null;
   const ap=par?(par.parent||par.id):null;
   const last=T().filter(t=>t.list===list&&t.parent===ap).sort(byPos).pop();
-  const t={title,notes:'',tags:o.tags||[],pri:o.pri||0,up:par&&par.id!==ap?par.id:null};
+  const t={title,notes:o.notes||'',tags:o.tags||[],pri:o.pri||0,up:par&&par.id!==ap?par.id:null};
   const body={title,notes:enc(t)};
   if(o.due)body.due=o.due+'T00:00:00.000Z';
   const q=new URLSearchParams();
@@ -237,10 +498,11 @@ async function addTask(list,title,o={}){
 async function patch(id,ch){
   const t=S.tasks[id];if(!t)return;
   Object.assign(t,ch);
-  const body={title:t.title,notes:enc(t),status:t.done?'completed':'needsAction',due:t.due?t.due+'T00:00:00.000Z':null};
-  if(!t.done)body.completed=null;
+  const body={title:t.title,notes:enc(t),due:t.due?t.due+'T00:00:00.000Z':null};
+  if(t.done!==t.srvDone){body.status=t.done?'completed':'needsAction';if(!t.done)body.completed=null}
   const r=await api(`/lists/${t.list}/tasks/${id}`,{method:'PATCH',body:JSON.stringify(body)});
-  if(S.tasks[id])S.tasks[id].updated=r.updated;
+  const n=S.tasks[id];
+  if(n){n.updated=r.updated;n.srvDone=n.done;n.completedAt=n.done?(r.completed||n.completedAt||new Date().toISOString()):null}
 }
 async function removeTask(id){
   const ids=[id,...desc(id)];
@@ -258,6 +520,7 @@ async function moveList(id,nl){
     const t={...o,list:nl,up:root?null:(newLp!==map[id]?newLp:null)};
     const body={title:o.title,notes:enc(t),status:o.done?'completed':'needsAction'};
     if(o.due)body.due=o.due+'T00:00:00.000Z';
+    if(o.done&&o.completedAt)body.completed=o.completedAt;
     const key=root?'':map[id];
     const q=new URLSearchParams();
     if(!root)q.set('parent',map[id]);
@@ -297,7 +560,7 @@ async function reparent(id,newLp){
 async function saveEdit(id,f){
   const t=S.tasks[id];
   const parentChanged=(f.parentLp||null)!==(lp(t)||null);
-  Object.assign(t,{title:f.title,notes:f.notes,due:f.due||null,pri:f.pri,tags:f.tags});
+  Object.assign(t,{title:f.title,notes:f.notes,due:f.due||null,pri:f.pri,tags:f.tags,done:f.done});
   await patch(id,{});
   if(f.list!==t.list)await moveList(id,f.list);
   else if(parentChanged)await reparent(id,f.parentLp||null);
@@ -309,169 +572,632 @@ function sorter(){
   if(S.sort==='pri')return(a,b)=>(b.pri-a.pri)||byPos(a,b);
   return byPos;
 }
-const flatSort=(a,b)=>S.sort==='pri'?((b.pri-a.pri)||((a.due||'9')<(b.due||'9')?-1:1)):(((a.due||'9')<(b.due||'9')?-1:(a.due||'9')>(b.due||'9')?1:0)||(b.pri-a.pri));
+const cmpFlat=(a,b)=>(b.pri-a.pri)||byPos(a,b);
+function cnt(vt,id){
+  const td=today(),o=T().filter(t=>!t.done);
+  if(vt==='inbox')return o.filter(t=>t.list===S.defId).length;
+  if(vt==='today')return o.filter(t=>t.due&&t.due<=td).length;
+  if(vt==='list')return o.filter(t=>t.list===id).length;
+  if(vt==='tag')return o.filter(t=>t.tags.includes(id)).length;
+  return 0;
+}
 function row(t,d,flat){
-  const kids=CH[t.id]||[];
-  const open=!S.collapsed.has(t.id);
-  const od=!t.done&&t.due&&t.due<today();
-  const chips=[];
-  if(t.due)chips.push(`<span class="${od?'od':''}">📅 ${t.due.slice(5).replace('-','/')}</span>`);
-  if(kids.length)chips.push(`<span>☑ ${kids.filter(k=>k.done).length}/${kids.length}</span>`);
-  if(t.notes)chips.push('<span>≡</span>');
-  t.tags.forEach(g=>chips.push(`<span class="tg" data-act="tag" data-v="${esc(g)}">#${esc(g)}</span>`));
-  if(flat){
-    const l=S.lists.find(x=>x.id===t.list);
-    if(l)chips.push(`<span>📁 ${esc(l.title)}</span>`);
-    const pp=lp(t)&&S.tasks[lp(t)];
-    if(pp)chips.push(`<span>↳ ${esc(pp.title)}</span>`);
-  }
-  let h=`<div class="row ${t.done?'done':''}" data-id="${t.id}" style="margin-left:${flat?0:d*22}px">`+
-    `<span class="fold" data-act="fold">${!flat&&kids.length?(open?'▾':'▸'):''}</span>`+
-    `<button class="chk p${t.pri}" data-act="toggle">${t.done?'✓':''}</button>`+
-    `<div class="main" data-act="edit"><div class="title">${esc(t.title)||'（無標題）'}</div>${chips.length?`<div class="meta">${chips.join('')}</div>`:''}</div>`+
-    `<button class="mini" data-act="addsub" title="新增子任務">＋</button></div>`;
-  if(S.sub===t.id)h+=`<div class="subadd" style="margin-left:${flat?0:(d+1)*22}px"><input id="subin" placeholder="子任務標題 · Enter 新增 · Esc 取消 · 可用 #標籤"></div>`;
-  return h;
+  const kids=CH[t.id]||[],open=!S.collapsed.has(t.id);
+  const meta=[];
+  const pp=flat&&lp(t)&&S.tasks[lp(t)];
+  if(pp)meta.push(`<span class="m">${esc(pp.title)} ›</span>`);
+  if(t.due){const i=dueInfo(t.due,t.done);meta.push(`<span class="m ${i.cls}">${ic('cal',13)}${i.text}</span>`)}
+  if(kids.length)meta.push(`<span class="m">${ic('sub',13)}${kids.filter(k=>k.done).length}/${kids.length}</span>`);
+  t.tags.forEach(g=>meta.push(`<span class="m lb" data-act="tag" data-v="${esc(g)}">${ic('tag',12)}${esc(g)}</span>`));
+  const l=S.lists.find(x=>x.id===t.list);
+  const proj=flat&&l?`<span class="proj">${esc(lname(l))}${l.id===S.defId?ic('inbox',13):`<b style="color:${pcol(l.id)};font-size:14px">#</b>`}</span>`:'';
+  return `<div class="row p${t.pri}${t.done?' done':''}" data-id="${t.id}" style="margin-left:${flat?0:d*26}px">`+
+    `<span class="fold ${!flat&&kids.length&&open?'open':''}" data-act="fold">${!flat&&kids.length?ic('chev',14):''}</span>`+
+    `<button class="chk" data-act="toggle" aria-label="完成">${ic('check',14)}</button>`+
+    `<div class="body" data-act="edit"><div class="title">${esc(t.title)||'（無標題）'}</div>`+
+    (t.notes?`<div class="desc">${esc(t.notes.split('\n')[0])}</div>`:'')+
+    (meta.length?`<div class="meta">${meta.join('')}</div>`:'')+`</div>${proj}`+
+    `<div class="acts"><button class="ibtn" data-act="addsub" title="新增子任務">${ic('sub',16)}</button>`+
+    `<button class="ibtn" data-act="edit" title="編輯">${ic('edit',16)}</button>`+
+    `<button class="ibtn" data-act="del" title="刪除">${ic('trash',16)}</button></div></div>`;
 }
 function tree(t,d){
   let h=row(t,d);
   if(!S.collapsed.has(t.id))(CH[t.id]||[]).filter(shown).forEach(k=>{h+=tree(k,d+1)});
   return h;
 }
+const EMPTY={inbox:['收件匣清空咗 🎉','新任務會首先放喺呢度'],today:['今日冇任務','享受你嘅一日 ☀️'],upcoming:['冇即將到期嘅任務','幫任務加到期日，就會出現喺呢度'],list:['呢個專案冇任務',''],tag:['冇相關任務','']};
+const emptyHTML=k=>{const e=EMPTY[k]||['冇任務',''];return `<div class="empty"><b>${e[0]}</b>${e[1]}</div>`};
 function listHTML(){
   const v=S.view,q=S.q.trim().toLowerCase(),td=today();
-  const flat=q||['today','upcoming','tag'].includes(v.t);
-  let h='';
-  if(flat){
-    let L=T().filter(t=>S.done||!t.done);
-    if(q)L=L.filter(t=>(t.title+' '+t.notes+' '+t.tags.map(g=>'#'+g).join(' ')).toLowerCase().includes(q));
-    else if(v.t==='today')L=L.filter(t=>t.due&&t.due<=td);
-    else if(v.t==='upcoming')L=L.filter(t=>t.due&&t.due>td);
-    else L=L.filter(t=>t.tags.includes(v.id));
-    L.sort(flatSort);
-    h=L.map(t=>row(t,0,true)).join('');
-  }else{
-    const ls=v.t==='list'?S.lists.filter(l=>l.id===v.id):S.lists;
-    ls.forEach(l=>{
-      const rs=(CH['']||[]).filter(t=>t.list===l.id&&shown(t));
-      if(v.t==='all'&&rs.length)h+=`<div class="lh">${esc(l.title)}</div>`;
-      rs.forEach(t=>{h+=tree(t,0)});
-    });
+  const open=t=>S.done||!t.done;
+  if(v.t==='habits')return habitsHTML();
+  if(v.t==='stats')return statsHTML();
+  if(v.t==='search'){
+    if(!q)return '<div class="empty">輸入關鍵字，搜尋標題、描述同標籤</div>';
+    const L=T().filter(t=>open(t)&&(t.title+' '+t.notes+' '+t.tags.join(' ')).toLowerCase().includes(q)).sort(cmpFlat);
+    return L.length?L.map(t=>row(t,0,true)).join(''):'<div class="empty"><b>搵唔到</b>試下其他關鍵字</div>';
   }
-  return h||'<div class="empty">冇任務 🎉</div>';
+  if(v.t==='today'||v.t==='upcoming'){
+    const ts=T().filter(t=>open(t)&&t.due);
+    const od=ts.filter(t=>!t.done&&t.due<td).sort((a,b)=>(a.due<b.due?-1:a.due>b.due?1:cmpFlat(a,b)));
+    let h='';
+    if(od.length)h+=`<div class="gh od">逾期</div>`+od.map(t=>row(t,0,true)).join('');
+    if(v.t==='today'){
+      const tt=ts.filter(t=>t.due===td).sort(cmpFlat);
+      if(tt.length){if(od.length)h+=`<div class="gh">${md(td)}<small>· 今日 · ${wdName(td)}</small></div>`;h+=tt.map(t=>row(t,0,true)).join('')}
+    }else{
+      const fut=ts.filter(t=>t.due>=td);
+      [...new Set(fut.map(t=>t.due))].sort().forEach(d=>{
+        const df=diffD(td,d);
+        h+=`<div class="gh">${md(d)}<small>· ${df===0?'今日 · ':df===1?'明日 · ':''}${wdName(d)}</small></div>`+fut.filter(t=>t.due===d).sort(cmpFlat).map(t=>row(t,0,true)).join('');
+      });
+    }
+    return h||emptyHTML(v.t);
+  }
+  if(v.t==='inbox'||v.t==='list'){
+    const id=v.t==='inbox'?S.defId:v.id;
+    const rs=(CH['']||[]).filter(t=>t.list===id&&shown(t));
+    return rs.length?rs.map(t=>tree(t,0)).join(''):emptyHTML(v.t);
+  }
+  const L=T().filter(t=>open(t)&&t.tags.includes(v.id)).sort(cmpFlat);
+  return L.length?L.map(t=>row(t,0,true)).join(''):emptyHTML('tag');
 }
 function sideHTML(){
-  const open=T().filter(t=>!t.done),td=today();
-  const n=f=>open.filter(f).length;
-  const it=(vt,vid,label,cnt,ic)=>`<div class="si ${S.view.t===vt&&(S.view.id||'')===(vid||'')?'on':''}" data-act="view" data-vt="${vt}" data-vid="${esc(vid||'')}"><span>${ic} ${esc(label)}</span><i>${cnt||''}</i></div>`;
-  let h=it('all','','全部',open.length,'🗂')+it('today','','今日 / 逾期',n(t=>t.due&&t.due<=td),'☀️')+it('upcoming','','即將到期',n(t=>t.due&&t.due>td),'🗓');
-  h+='<h4>分類 <button class="mini" data-act="newlist" title="新增分類">＋</button></h4>';
-  S.lists.forEach(l=>{h+=it('list',l.id,l.title,n(t=>t.list===l.id),'📁')});
-  const tags={};
-  open.forEach(t=>t.tags.forEach(g=>{tags[g]=(tags[g]||0)+1}));
+  const cur=(vt,vid)=>S.view.t===vt&&(S.view.id||'')===(vid||'');
+  const it=(vt,vid,icon,label,c,color)=>`<div class="ni ${cur(vt,vid)?'on':''}" data-act="view" data-vt="${vt}" data-vid="${esc(vid||'')}"><span class="ic" ${color?`style="color:${color}"`:''}>${icon}</span><span class="nm">${esc(label)}</span>${c?`<span class="ct">${c}</span>`:''}</div>`;
+  const sec=(k,label,body,extra)=>`<div class="sh ${S.sec[k]?'':'c'}" data-act="sec" data-k="${k}"><span class="t">${label}</span>${extra||''}<span class="chev">${ic('chev',14)}</span></div>${S.sec[k]?body:''}`;
+  let h=`<button class="addbtn" data-act="newtask"><span class="plus">${ic('plus',16)}</span>新增任務</button>`;
+  h+=it('search','',ic('search'),'搜尋',0);
+  h+=it('inbox','',ic('inbox'),'收件匣',cnt('inbox'),'#5a7694');
+  h+=it('today','',icToday(),'今日',cnt('today'),'#5f8f6e');
+  h+=it('upcoming','',ic('upcoming'),'即將到期',0,'#8a6f9e');
+  h+=it('habits','',ic('habit'),'習慣',S.habits.filter(x=>hPend(x,today())).length,'#b58a3d');
+  h+=it('stats','',ic('chart'),'統計',0,'#4f8a8a');
+  const tags={};T().filter(t=>!t.done).forEach(t=>t.tags.forEach(g=>{tags[g]=(tags[g]||0)+1}));
   const tk=Object.keys(tags).sort();
-  if(tk.length){h+='<h4>標籤</h4>';tk.forEach(g=>{h+=it('tag',g,'#'+g,tags[g],'🏷')})}
+  if(tk.length)h+=sec('labels','標籤',tk.map(g=>it('tag',g,ic('tag',16),g,tags[g])).join(''));
+  h+=sec('proj','專案',S.lists.filter(l=>l.id!==S.defId).map(l=>it('list',l.id,`<span class="hs" style="color:${pcol(l.id)}">#</span>`,l.title,cnt('list',l.id))).join(''),
+    `<button class="ibtn" data-act="newlist" title="新增專案">${ic('plus',16)}</button>`);
   return h;
 }
+function ctx(){
+  const v=S.view;
+  return{list:v.t==='list'?v.id:(S.defId||(S.lists[0]||{}).id),due:v.t==='today'?today():'',tags:v.t==='tag'?[v.id]:[]};
+}
+function renderInline(){
+  const el=$('#inlineadd'),v=S.view;
+  if(v.t==='habits'){el.innerHTML=S.habits.length?`<button class="addrow" data-act="newhabit"><span class="plus">${ic('plus',18)}</span>新增習慣</button>`:'';return}
+  if(v.t==='search'||v.t==='stats'||!S.lists.length){el.innerHTML='';return}
+  if(!S.adding){el.innerHTML=`<button class="addrow" data-act="inlineadd"><span class="plus">${ic('plus',18)}</span>新增任務</button>`;return}
+  mountAdd(el,{...ctx(),focus:true,onClose:()=>{S.adding=false;renderInline()}});
+}
 function render(){
-  CH={};
-  const sf=sorter();
+  CH={};const sf=sorter();
   T().forEach(t=>{const p=lp(t)||'';(CH[p]||(CH[p]=[])).push(t)});
   Object.values(CH).forEach(a=>a.sort(sf));
-  if(S.view.t==='list'&&!S.lists.find(l=>l.id===S.view.id))S.view={t:'all',id:''};
-  $('#side').innerHTML=sideHTML();
-  const v=S.view;
-  $('#vt').textContent=S.q.trim()?'搜尋：'+S.q.trim():v.t==='all'?'全部任務':v.t==='today'?'今日 / 逾期':v.t==='upcoming'?'即將到期':v.t==='tag'?'#'+v.id:(S.lists.find(l=>l.id===v.id)||{}).title||'';
-  $('#vacts').innerHTML=v.t==='list'?'<button class="mini" data-act="renlist" title="重新命名">✎</button><button class="mini" data-act="dellist" title="刪除分類">🗑</button>':'';
-  const prev=$('#subin')?$('#subin').value:'';
-  const hadFocus=document.activeElement&&document.activeElement.id==='subin';
+  let v=S.view;
+  if(v.t==='list'&&S.lists.length&&!S.lists.find(l=>l.id===v.id)){S.view=v={t:'today',id:''}}
+  $('#nav').innerHTML=sideHTML();
+  document.body.dataset.v=v.t;
+  $('#vt').textContent=v.t==='inbox'?'收件匣':v.t==='today'?'今日':v.t==='upcoming'?'即將到期':v.t==='search'?'搜尋':v.t==='habits'?'習慣':v.t==='stats'?'統計':v.t==='tag'?'@'+v.id:(S.lists.find(l=>l.id===v.id)||{}).title||'';
+  $('#vacts').innerHTML=v.t==='list'?`<button class="ibtn" data-act="renlist" title="重新命名">${ic('edit',16)}</button><button class="ibtn" data-act="dellist" title="刪除專案">${ic('trash',16)}</button>`:'';
+  const n=['inbox','today','list','tag'].includes(v.t)?cnt(v.t,v.id):null;
+  let sub=n===null?'':`${ic('check',14)}${n} 項任務`;
+  if(v.t==='inbox'||v.t==='list'){
+    const id=v.t==='inbox'?S.defId:v.id,all=T().filter(t=>t.list===id),dn=all.filter(t=>t.done).length,pct=all.length?Math.round(dn/all.length*100):0;
+    sub+=` · 已完成 ${dn}/${all.length}<span class="pbar" style="--c:${v.t==='inbox'?'#5a7694':pcol(id)}"><i style="width:${pct}%"></i></span>${pct}%`;
+  }else if(v.t==='habits'){
+    const td=today(),ws=weekStart(td),dueT=S.habits.filter(x=>x.freq.k==='week'?(isDone(x,td)||weekCount(x,ws)<(x.freq.n||3)):hDue(x,td));
+    sub=S.habits.length?`${ic('check',14)}今日 ${dueT.filter(x=>isDone(x,td)).length}/${dueT.length} 完成`:'';
+  }else if(v.t==='stats')sub='追蹤任務、專案同習慣嘅進度';
+  $('#vsub').innerHTML=sub;
+  $('#q').hidden=v.t!=='search';
   $('#list').innerHTML=listHTML();
-  const si=$('#subin');
-  if(si){si.value=prev;if(S.focusSub||hadFocus){si.focus();S.focusSub=false}}
-  const sel=$('#ql'),cur=sel.value;
-  const want=v.t==='list'?v.id:(S.lists.find(l=>l.id===cur)?cur:(LS('tt_dl')||(S.lists[0]||{}).id));
-  const key=S.lists.map(l=>l.id+l.title).join('|')+'@'+want;
-  if(sel.dataset.k!==key){sel.innerHTML=S.lists.map(l=>`<option value="${l.id}" ${l.id===want?'selected':''}>${esc(l.title)}</option>`).join('');sel.dataset.k=key}
+  if(!S.adding)renderInline();
   $('#err').textContent=S.err;
   $('#syncb').style.opacity=S.busy?.4:1;
-  LS('tt_cache',{lists:S.lists,tasks:S.tasks});
+  LS('tt_cache',{lists:S.lists,tasks:S.tasks,defId:S.defId,habits:S.habits,dataId:S.dataId,setId:S.setId});
 }
 
-/* ---------- 編輯視窗 ---------- */
+/* ---------- 新增表單（行內 / 對話框共用） ---------- */
+function mountAdd(el,o){
+  el.innerHTML=`<form class="af" autocomplete="off">
+    <input class="t" placeholder="${o.parent?'子任務名稱':'任務名稱，例：交報告 明日 p1 @工作 #專案'}">
+    <input class="d" placeholder="描述">
+    <div class="hint"></div>
+    <div class="r">
+      <input type="date" class="dt" title="到期日" value="${o.due||''}">
+      <select class="pr" title="優先度"><option value="">優先度</option><option value="3">P1 最高</option><option value="2">P2 高</option><option value="1">P3 中</option><option value="0">P4 無</option></select>
+      <input class="tg" placeholder="標籤，逗號分隔" value="${esc((o.tags||[]).join(', '))}">
+    </div>
+    <div class="f">${o.parent?'':`<select class="ls" title="專案">${S.lists.map(l=>`<option value="${l.id}" ${l.id===o.list?'selected':''}>${esc(lname(l))}</option>`).join('')}</select>`}
+      <span class="sp"></span><button type="button" class="btn cx">取消</button><button class="btn red ok" disabled>${o.parent?'新增子任務':'新增任務'}</button></div>
+  </form>`;
+  const f=el.querySelector('form'),ti=f.querySelector('.t'),ok=f.querySelector('.ok'),hint=f.querySelector('.hint');
+  let dirtyD=false,dirtyL=false;
+  const resolve=()=>{
+    const q=parseQuick(ti.value),sel=f.querySelector('.ls');
+    const dv=f.querySelector('.dt').value,pv=f.querySelector('.pr').value;
+    return{
+      title:q.title,
+      list:o.parent?S.tasks[o.parent].list:(dirtyL?sel.value:(q.list||sel.value)),
+      due:dirtyD?(dv||null):(q.due||dv||null),
+      pri:pv!==''?+pv:(q.pri??0),
+      tags:[...new Set([...q.tags,...f.querySelector('.tg').value.split(/[,，\s@#]+/).filter(Boolean)])],
+      notes:f.querySelector('.d').value.trim()};
+  };
+  const upd=()=>{
+    const p=resolve(),b=[];
+    if(ti.value.trim()){
+      if(p.due){const i=dueInfo(p.due);b.push(`<span class="m ${i.cls}">${ic('cal',13)}${i.text}</span>`)}
+      if(p.pri>0)b.push(`<span class="m" style="color:${PRC[p.pri]}">P${4-p.pri}</span>`);
+      p.tags.forEach(g=>b.push(`<span class="m">${ic('tag',12)}${esc(g)}</span>`));
+      if(!o.parent){const l=S.lists.find(x=>x.id===p.list);if(l&&p.list!==o.list)b.push(`<span class="m"><b style="color:${pcol(l.id)}">#</b>${esc(lname(l))}</span>`)}
+    }
+    hint.innerHTML=b.join('');
+    ok.disabled=!ti.value.trim();
+  };
+  f.addEventListener('input',upd);
+  f.addEventListener('change',e=>{if(e.target.classList.contains('dt'))dirtyD=true;if(e.target.classList.contains('ls'))dirtyL=true;upd()});
+  f.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();o.onClose&&o.onClose()}});
+  f.querySelector('.cx').onclick=()=>o.onClose&&o.onClose();
+  f.onsubmit=e=>{
+    e.preventDefault();
+    const p=resolve();if(!ti.value.trim())return;
+    run(()=>addTask(p.list,p.title,{tags:p.tags,pri:p.pri,due:p.due,notes:p.notes,parent:o.parent}));
+    if(o.once)return o.onClose&&o.onClose();
+    ti.value='';f.querySelector('.d').value='';upd();ti.focus();
+  };
+  upd();
+  if(o.focus)setTimeout(()=>ti.focus(),0);
+}
+function openAdd(o={}){
+  const d=$('#adlg');
+  d.innerHTML='<div id="adslot"></div>';
+  mountAdd($('#adslot'),{...ctx(),...o,focus:true,once:true,onClose:()=>d.close()});
+  d.showModal();
+}
+
+/* ---------- 任務詳情 ---------- */
 function openEdit(id){
   const t=S.tasks[id];if(!t)return;
   const ban=new Set([id,...desc(id)]);
-  const popts=list=>'<option value="">（無，最上層）</option>'+T().filter(x=>x.list===list&&!ban.has(x.id)).sort(byPos).map(x=>`<option value="${x.id}" ${x.id===lp(t)?'selected':''}>${esc(x.title)}</option>`).join('');
   const d=$('#dlg');
-  d.innerHTML=`<label>標題</label><input id="e_title" value="${esc(t.title)}">
-  <label>備註</label><textarea id="e_notes">${esc(t.notes)}</textarea>
-  <div class="grid2"><div><label>到期日</label><input id="e_due" type="date" value="${t.due||''}"></div>
-  <div><label>優先度</label><select id="e_pri">${['無','低','中','高'].map((x,i)=>`<option value="${i}" ${t.pri===i?'selected':''}>${x}</option>`).join('')}</select></div></div>
-  <label>標籤（用逗號或空格分隔）</label><input id="e_tags" value="${esc(t.tags.join(', '))}">
-  <div class="grid2"><div><label>分類（清單）</label><select id="e_list">${S.lists.map(l=>`<option value="${l.id}" ${l.id===t.list?'selected':''}>${esc(l.title)}</option>`).join('')}</select></div>
-  <div><label>上層任務</label><select id="e_par">${popts(t.list)}</select></div></div>
-  <div class="btns"><button class="btn del" id="e_del">刪除</button><span class="sp"></span><button class="btn" id="e_cancel">取消</button><button class="btn pri" id="e_save">儲存</button></div>`;
+  let done=t.done;
+  const popts=list=>'<option value="">（無，最上層）</option>'+T().filter(x=>x.list===list&&!ban.has(x.id)).sort(byPos).map(x=>`<option value="${x.id}" ${x.id===lp(t)?'selected':''}>${esc(x.title)}</option>`).join('');
+  d.innerHTML=`<div class="dg"><div class="dl">
+    <div class="dtitle p${t.pri}" id="e_tw"><button class="chk ${done?'on':''}" id="e_chk" type="button" aria-label="完成">${ic('check',14)}</button><input id="e_title" value="${esc(t.title)}"></div>
+    <textarea class="dnotes" id="e_notes" placeholder="描述">${esc(t.notes)}</textarea>
+    <div class="dsubh">子任務</div><div id="e_subs"></div>
+    <form id="e_subf"><input id="e_subin" placeholder="＋ 新增子任務，Enter 加入" autocomplete="off"></form>
+  </div><div class="dr">
+    <label>專案</label><select id="e_list">${S.lists.map(l=>`<option value="${l.id}" ${l.id===t.list?'selected':''}>${esc(lname(l))}</option>`).join('')}</select>
+    <label>日期</label><input id="e_due" type="date" value="${t.due||''}">
+    <label>優先度</label><select id="e_pri">${[3,2,1,0].map(p=>`<option value="${p}" ${t.pri===p?'selected':''}>P${4-p}${['',' 中',' 高',' 最高'][p]}</option>`).join('')}</select>
+    <label>標籤</label><input id="e_tags" value="${esc(t.tags.join(', '))}" placeholder="逗號分隔">
+    <label>上層任務</label><select id="e_par">${popts(t.list)}</select>
+  </div></div>
+  <div class="dfoot"><button class="btn del" id="e_del">刪除</button><span class="sp"></span><button class="btn" id="e_cancel">取消</button><button class="btn red" id="e_save">儲存</button></div>`;
+  const renderSubs=()=>{
+    const ks=CH[id]||[];
+    $('#e_subs').innerHTML=ks.length?ks.map(k=>{
+      const di=k.due?dueInfo(k.due,k.done):null;
+      return `<div class="row p${k.pri}${k.done?' done':''}" data-id="${k.id}"><button class="chk" data-act="dsub-toggle" type="button">${ic('check',14)}</button><div class="body" data-act="dsub-open"><div class="title">${esc(k.title)}</div>${di?`<div class="meta"><span class="m ${di.cls}">${ic('cal',13)}${di.text}</span></div>`:''}</div></div>`}).join('')
+      :'<div class="desc" style="padding:6px 0">未有子任務</div>';
+  };
+  S.rs=renderSubs;renderSubs();
+  d.onclose=()=>{S.rs=null};
+  $('#e_chk').onclick=()=>{done=!done;$('#e_chk').classList.toggle('on',done)};
+  $('#e_pri').onchange=()=>{$('#e_tw').className='dtitle p'+$('#e_pri').value};
   $('#e_list').onchange=()=>{const same=$('#e_list').value===t.list;$('#e_par').disabled=!same;if(!same)$('#e_par').value=''};
+  $('#e_subf').onsubmit=e=>{
+    e.preventDefault();
+    const inp=$('#e_subin'),q=parseQuick(inp.value);if(!inp.value.trim())return;
+    inp.value='';
+    run(()=>addTask(t.list,q.title,{parent:id,tags:q.tags,pri:q.pri||0,due:q.due})).then(renderSubs);
+  };
   $('#e_cancel').onclick=()=>d.close();
   $('#e_del').onclick=()=>{if(confirm('刪除呢個任務同佢嘅所有子任務？')){d.close();run(()=>removeTask(id))}};
   $('#e_save').onclick=()=>{
     const f={title:$('#e_title').value.trim()||t.title,notes:$('#e_notes').value.trim(),due:$('#e_due').value,pri:+$('#e_pri').value,
-      tags:[...new Set($('#e_tags').value.split(/[,，\s#]+/).filter(Boolean))],list:$('#e_list').value,parentLp:$('#e_par').value};
+      tags:[...new Set($('#e_tags').value.split(/[,，\s@#]+/).filter(Boolean))],list:$('#e_list').value,parentLp:$('#e_par').value,done};
     d.close();run(()=>saveEdit(id,f));
   };
   d.showModal();
 }
 
+/* ---------- 習慣追蹤（資料存喺 Google Tasks 名為「_TaskPlus 資料」嘅清單，每個習慣一個任務） ---------- */
+const DATA_TITLE='_TaskPlus 資料';
+const ymk=d=>d.slice(0,7),dnum=d=>+d.slice(8,10);
+const isDone=(h,d)=>(((h.log[ymk(d)]||0)>>(dnum(d)-1))&1)===1;
+function setDone(h,d,v){
+  const k=ymk(d),b=1<<(dnum(d)-1);let m=h.log[k]||0;
+  m=v?(m|b):(m&~b);if(m)h.log[k]=m;else delete h.log[k];
+  if(v&&d<h.created)h.created=d;
+}
+const popc=m=>{let c=0;while(m){c+=m&1;m>>>=1}return c};
+const dayList=(a,b)=>{const o=[];for(let d=a;d<=b;d=addD(d,1))o.push(d);return o};
+const weekStart=d=>addD(d,-((pd(d).getDay()+6)%7));
+const hDue=(h,d)=>d>=h.created&&(h.freq.k!=='days'||(h.freq.days||[]).includes(pd(d).getDay()));
+const weekCount=(h,ws)=>{let c=0;for(let i=0;i<7;i++)if(isDone(h,addD(ws,i)))c++;return c};
+const hPend=(h,d)=>!isDone(h,d)&&(h.freq.k==='week'?weekCount(h,weekStart(d))<(h.freq.n||3):hDue(h,d));
+function parseHabit(t){
+  let m;try{m=JSON.parse(t.notes||'')}catch{return null}
+  if(!m||typeof m!=='object')return null;
+  return{id:t.id,name:t.title||'',color:m.color||PAL[0],freq:m.freq||{k:'daily'},created:m.created||today(),log:m.log||{},note:m.note||'',pos:t.position||''};
+}
+const hMeta=h=>JSON.stringify({v:1,color:h.color,freq:h.freq,created:h.created,log:h.log,note:h.note});
+async function ensureDataList(){
+  if(S.dataId)return S.dataId;
+  const r=await api('/users/@me/lists',{method:'POST',body:JSON.stringify({title:DATA_TITLE})});
+  return S.dataId=r.id;
+}
+async function createHabit(h){
+  const lid=await ensureDataList();
+  const r=await api(`/lists/${lid}/tasks`,{method:'POST',body:JSON.stringify({title:h.name,notes:hMeta(h)})});
+  S.habits.push({...h,id:r.id,pos:r.position||'zzzz'});
+}
+const saveHabit=h=>api(`/lists/${S.dataId}/tasks/${h.id}`,{method:'PATCH',body:JSON.stringify({title:h.name,notes:hMeta(h)})});
+async function deleteHabit(id){S.habits=S.habits.filter(x=>x.id!==id);await api(`/lists/${S.dataId}/tasks/${id}`,{method:'DELETE'})}
+function toggleHabit(id,d){const h=S.habits.find(x=>x.id===id);if(!h)return;setDone(h,d,!isDone(h,d));run(()=>saveHabit(h))}
+function hStats(h,R=30){
+  const td=today();let run=0,best=0;
+  if(h.freq.k==='week'){
+    const n=h.freq.n||3,thisW=weekStart(td);
+    for(let w=weekStart(h.created);w<=thisW;w=addD(w,7)){
+      if(weekCount(h,w)>=n){run++;best=Math.max(best,run)}else if(w!==thisW)run=0;
+    }
+  }else{
+    for(let d=h.created;d<=td;d=addD(d,1)){
+      if(!hDue(h,d))continue;
+      if(isDone(h,d)){run++;best=Math.max(best,run)}else if(d!==td)run=0;
+    }
+  }
+  const total=Object.values(h.log).reduce((a,m)=>a+popc(m),0);
+  const ds=dayList(addD(td,-(R-1)),td).filter(d=>d>=h.created);
+  let rate=null;
+  if(ds.length){
+    if(h.freq.k==='week')rate=Math.min(1,ds.filter(d=>isDone(h,d)).length/(ds.length*(h.freq.n||3)/7));
+    else{const due=ds.filter(d=>hDue(h,d));rate=due.length?due.filter(d=>isDone(h,d)).length/due.length:null}
+  }
+  return{cur:run,best,total,rate};
+}
+const hFreqText=h=>h.freq.k==='daily'?'每日':h.freq.k==='days'?'逢星期'+(h.freq.days||[]).slice().sort((a,b)=>((a+6)%7)-((b+6)%7)).map(x=>WD[x]).join(''):'每週 '+(h.freq.n||3)+' 次';
+function habitsHTML(){
+  const td=today();
+  if(!S.habits.length)return `<div class="empty"><b>未有習慣</b>建立習慣（例如跑步、閱讀、飲水），每日打卡，追蹤連續日數<br><br><button class="btn red" data-act="newhabit">新增習慣</button></div>`;
+  const tg=`<div class="seg" style="margin-bottom:6px">${[['list','清單'],['cal','月曆']].map(([k,l])=>`<button data-act="hmode" data-m="${k}" class="${S.hmode===k?'on':''}">${l}</button>`).join('')}</div>`;
+  if(S.hmode==='cal')return tg+habitsCalHTML();
+  const week=dayList(addD(td,-6),td);
+  return tg+S.habits.map(h=>{
+    const st=hStats(h),on=isDone(h,td),isW=h.freq.k==='week',unit=isW?'週':'日';
+    const meta=[`<span class="m">${hFreqText(h)}</span>`];
+    if(st.cur>0)meta.push(`<span class="m" style="color:var(--tom)">${ic('flame',13)}連續 ${st.cur} ${unit}</span>`);
+    if(isW)meta.push(`<span class="m">本週 ${weekCount(h,weekStart(td))}/${h.freq.n||3}</span>`);
+    if(st.rate!==null)meta.push(`<span class="m">近 30 日 ${Math.round(st.rate*100)}%</span>`);
+    const strip=week.map(d=>`<div class="sd ${d===td?'td':''}"><button class="dd ${isDone(h,d)?'on':''} ${hDue(h,d)?'':'nd'}" data-act="hday" data-d="${d}" title="${md(d)} ${wdName(d)}" aria-label="${md(d)}"></button><span>${WD[pd(d).getDay()]}</span></div>`).join('');
+    return `<div class="hrow" data-id="${h.id}" style="--hc:${h.color}"><button class="hchk ${on?'on':''}" data-act="hcheck" aria-label="今日打卡">${ic('check',16)}</button><div class="hbody" data-act="hopen"><div class="title">${esc(h.name)}</div><div class="meta">${meta.join('')}</div></div><div class="strip">${strip}</div></div>`;
+  }).join('');
+}
+function habitHeat(h){
+  const td=today(),W=20,s=weekStart(addD(td,-(W-1)*7));let out='';
+  for(let i=0;i<W*7;i++){
+    const d=addD(s,i);
+    out+=d>td?'<span class="hc fut"></span>':`<button type="button" class="hc ${isDone(h,d)?'on':''}" data-act="hcell" data-d="${d}" data-tip="${md(d)} ${wdName(d)}${isDone(h,d)?' · 已打卡':''}"></button>`;
+  }
+  return `<div class="heat" style="--hc:${h.color}">${out}</div>`;
+}
+function openHabit(id){
+  const h0=id?S.habits.find(x=>x.id===id):null;
+  const h=h0||{name:'',note:'',color:PAL[S.habits.length%PAL.length],freq:{k:'daily',days:[1,2,3,4,5],n:3},created:today(),log:{}};
+  let color=h.color;const days=new Set(h.freq.days||[1,2,3,4,5]);
+  const d=$('#dlg'),unit=h.freq.k==='week'?'週':'日';
+  const card=(l,v)=>`<div class="card"><div class="lb">${l}</div><div class="v">${v}</div></div>`;
+  const cardsHTML=x=>{const st=hStats(x);return card('目前連續',st.cur+' '+unit)+card('最長連續',st.best+' '+unit)+card('總打卡',st.total+' 次')+card('近 30 日',st.rate===null?'—':Math.round(st.rate*100)+'%')};
+  d.innerHTML=`<div class="dl" style="padding:22px">
+    <div class="dsubh" style="margin:0 0 8px;font-size:16px">${h0?'習慣':'新增習慣'}</div>
+    <input id="h_name" class="bigin" placeholder="習慣名稱，例：跑步 30 分鐘" value="${esc(h.name)}" autocomplete="off">
+    <input id="h_note" class="bigin2" placeholder="備註（可選）" value="${esc(h.note)}" autocomplete="off">
+    <div class="fl">顏色</div><div class="sws" id="h_sw">${swHTML(color)}</div>
+    <div class="fl">頻率</div>
+    <select id="h_k"><option value="daily">每日</option><option value="days">逢星期幾</option><option value="week">每週 N 次</option></select>
+    <div id="h_days" class="chips">${[1,2,3,4,5,6,0].map(x=>`<button type="button" class="chip ${days.has(x)?'on':''}" data-w="${x}">${WD[x]}</button>`).join('')}</div>
+    <div id="h_n">每週 <select id="h_nn">${[1,2,3,4,5,6,7].map(x=>`<option ${x===(h.freq.n||3)?'selected':''}>${x}</option>`).join('')}</select> 次</div>
+    ${h0?`<div class="cards c4" id="h_cards" style="margin-top:18px">${cardsHTML(h0)}</div>
+    <div class="fl">打卡紀錄（撳日子補打卡 / 取消）</div><div id="h_heat"></div>`:''}
+  </div>
+  <div class="dfoot">${h0?'<button class="btn del" id="h_del">刪除</button>':''}<span class="sp"></span><button class="btn" id="h_cancel">取消</button><button class="btn red" id="h_save">儲存</button></div>`;
+  $('#h_k').value=h.freq.k;
+  const sync=()=>{const k=$('#h_k').value;$('#h_days').hidden=k!=='days';$('#h_n').hidden=k!=='week'};sync();
+  $('#h_k').onchange=sync;
+  bindSw($('#h_sw'),c=>{color=c});
+  d.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const w=+b.dataset.w;days.has(w)?days.delete(w):days.add(w);b.classList.toggle('on',days.has(w))});
+  if(h0){S.hdlg=id;let tab='cal',ym=today().slice(0,7);
+    const rh=()=>{
+      const x=S.habits.find(y=>y.id===id);if(!x)return;
+      $('#h_cards').innerHTML=cardsHTML(x);
+      const c=$('#h_heat');
+      c.innerHTML=`<div class="seg" style="margin-bottom:6px"><button type="button" data-tab="cal" class="${tab==='cal'?'on':''}">月曆</button><button type="button" data-tab="heat" class="${tab==='heat'?'on':''}">近 20 週</button></div>`+(tab==='cal'?habitMonth(x,ym):`<div style="overflow-x:auto">${habitHeat(x)}</div>`);
+      c.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;rh()});
+      c.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const n=+b.dataset.nav;ym=n===0?today().slice(0,7):addM(ym,n);rh()});
+    };S.rs=rh;rh()}
+  d.onclose=()=>{S.rs=null;S.hdlg=null};
+  $('#h_cancel').onclick=()=>d.close();
+  if(h0)$('#h_del').onclick=()=>{if(confirm('刪除呢個習慣同所有打卡紀錄？')){d.close();run(()=>deleteHabit(id))}};
+  $('#h_save').onclick=()=>{
+    const name=$('#h_name').value.trim();if(!name)return $('#h_name').focus();
+    const k=$('#h_k').value,freq={k,days:[...days],n:+$('#h_nn').value};
+    if(k==='days'&&!freq.days.length)return alert('請至少揀一日');
+    const note=$('#h_note').value.trim();
+    d.close();
+    if(h0){Object.assign(h0,{name,note,color,freq});run(()=>saveHabit(h0))}
+    else run(()=>createHabit({...h,name,note,color,freq}));
+  };
+  d.showModal();
+  if(!h0)setTimeout(()=>$('#h_name').focus(),0);
+}
+
+/* ---------- 統計 ---------- */
+function barChart(vals,xl,tips,label){
+  const W=Math.max(280,Math.min(720,$('#list').clientWidth||720)),H=180,L=30,B=22,T=16,R=4;
+  const n=vals.length,max=Math.max(0,...vals);
+  const top=max<=4?4:max<=10?Math.ceil(max/2)*2:Math.ceil(max/10)*10;
+  const pw=W-L-R,ph=H-T-B,slot=pw/n,bw=Math.max(2,Math.min(24,slot-2));
+  const yy=v=>T+ph-(v/top)*ph;
+  let g='';
+  [0,top/2,top].forEach(v=>{g+=`<line x1="${L}" x2="${W-R}" y1="${yy(v)}" y2="${yy(v)}" stroke="${v===0?'var(--axis)':'var(--grid)'}" stroke-width="1"/><text x="${L-6}" y="${yy(v)+4}" text-anchor="end" font-size="11" fill="var(--mut)">${v}</text>`});
+  vals.forEach((v,i)=>{
+    const x=L+i*slot+(slot-bw)/2,h=(v/top)*ph,y=T+ph-h,r=Math.min(4,h);
+    if(v>0)g+=`<path d="M${x},${y+h}V${y+r}Q${x},${y} ${x+r},${y}H${x+bw-r}Q${x+bw},${y} ${x+bw},${y+r}V${y+h}Z" fill="var(--s1)"/>`;
+    if(xl[i]){const last=i===n-1&&n>7;g+=`<text x="${last?W-R:L+i*slot+slot/2}" y="${H-6}" text-anchor="${last?'end':'middle'}" font-size="11" fill="var(--mut)">${xl[i]}</text>`}
+    g+=`<rect x="${L+i*slot}" y="${T}" width="${slot}" height="${ph}" fill="transparent" data-tip="${esc(tips[i])}"/>`;
+  });
+  if(max>0){const i=vals.indexOf(max);g+=`<text x="${L+i*slot+slot/2}" y="${yy(max)-5}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--tx)">${max}</text>`}
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(label)}" style="display:block">${g}</svg>`;
+}
+function taskHeat(cd){
+  const td=today(),W=Math.min(26,Math.max(8,Math.floor(($('#list').clientWidth||400)/14))),s=weekStart(addD(td,-(W-1)*7));
+  let mx=1,out='';Object.values(cd).forEach(c=>{if(c>mx)mx=c});
+  for(let i=0;i<W*7;i++){
+    const d=addD(s,i);if(d>td){out+='<span class="hc fut"></span>';continue}
+    const c=cd[d]||0,l=c?Math.max(1,Math.ceil(c/mx*4)):0;
+    out+=`<span class="hc l${l}" data-tip="${md(d)} ${wdName(d)}：${c} 項"></span>`;
+  }
+  return `<div class="heat">${out}</div><div class="hlg">少 <span class="hc"></span><span class="hc l1"></span><span class="hc l2"></span><span class="hc l3"></span><span class="hc l4"></span> 多</div>`;
+}
+function statsHTML(){
+  const R=S.range,td=today(),ws=weekStart(td);
+  const cd={};T().filter(t=>t.done&&t.completedAt).forEach(t=>{const d=ymd(new Date(t.completedAt));cd[d]=(cd[d]||0)+1});
+  const days=dayList(addD(td,-(R-1)),td),vals=days.map(d=>cd[d]||0),total=vals.reduce((a,b)=>a+b,0);
+  let st=0,dd=cd[td]?td:addD(td,-1);while(cd[dd]){st++;dd=addD(dd,-1)}
+  const overdue=T().filter(t=>!t.done&&t.due&&t.due<td).length;
+  const dueT=S.habits.filter(x=>x.freq.k==='week'?(isDone(x,td)||weekCount(x,ws)<(x.freq.n||3)):hDue(x,td));
+  const doneT=dueT.filter(x=>isDone(x,td)).length;
+  const best=S.habits.reduce((a,x)=>Math.max(a,hStats(x).cur),0);
+  const card=(l,v,s)=>`<div class="card"><div class="lb">${l}</div><div class="v">${v}</div><div class="sb">${s||'&nbsp;'}</div></div>`;
+  let h=`<div class="seg">${[7,30,90].map(n=>`<button data-act="range" data-n="${n}" class="${R===n?'on':''}">${n} 日</button>`).join('')}</div>`;
+  h+=`<div class="cards">`+card('完成任務',total,`過去 ${R} 日`)+card('日均',(total/R).toFixed(1),'項 / 日')+card('連續完成',st+' 日','每日至少完成 1 項')+card('逾期中',overdue,overdue?'要跟進':'冇逾期')+card('今日習慣',S.habits.length?`${doneT}/${dueT.length}`:'—',S.habits.length?'已打卡':'未有習慣')+card('習慣最長連續',best,'目前最高')+`</div>`;
+  const step=R<=7?1:R<=31?7:15;
+  const xl=days.map((d,i)=>(R-1-i)%step===0?`${+d.slice(5,7)}/${+d.slice(8)}`:'');
+  const tips=days.map((d,i)=>`${md(d)} ${wdName(d)}：${vals[i]} 項`);
+  h+=`<div class="sec-h">每日完成任務<small>過去 ${R} 日${total?'':'　完成任務後，數字會喺呢度累積'}</small></div>`+barChart(vals,xl,tips,`過去 ${R} 日每日完成任務數，合共 ${total} 項`);
+  h+=`<details class="tbl"><summary>以表格查看</summary><table>${days.slice().reverse().map((d,i)=>`<tr><td>${md(d)} ${wdName(d)}</td><td>${vals[R-1-i]} 項</td></tr>`).join('')}</table></details>`;
+  const rows=S.lists.map(l=>{const ts=T().filter(t=>t.list===l.id);return{l,tot:ts.length,dn:ts.filter(t=>t.done).length,od:ts.filter(t=>!t.done&&t.due&&t.due<td).length}}).filter(r=>r.tot).sort((a,b)=>b.tot-a.tot);
+  h+=`<div class="sec-h">專案進度<small>已完成 / 全部任務</small></div>`+(rows.length?rows.map(r=>{
+    const pct=Math.round(r.dn/r.tot*100),inb=r.l.id===S.defId;
+    return `<div class="prow" data-act="view" data-vt="${inb?'inbox':'list'}" data-vid="${inb?'':r.l.id}"><span class="nm">${esc(lname(r.l))}</span><div class="meter" style="--c:${inb?'#5a7694':pcol(r.l.id)}"><i style="width:${pct}%"></i></div><span class="pv">${r.dn}/${r.tot} · ${pct}%${r.od?` · <b style="color:var(--od);font-weight:500">逾期 ${r.od}</b>`:''}</span></div>`}).join(''):'<div class="desc">未有任務</div>');
+  h+=`<div class="sec-h">習慣完成率<small>過去 ${R} 日</small></div>`+(S.habits.length?S.habits.map(x=>{
+    const s=hStats(x,R),p=s.rate===null?0:Math.round(s.rate*100);
+    return `<div class="prow" data-act="hopen" data-id="${x.id}"><span class="nm">${esc(x.name)}</span><div class="meter" style="--c:${x.color}"><i style="width:${p}%"></i></div><span class="pv">${s.rate===null?'—':p+'%'} · 連續 ${s.cur} ${x.freq.k==='week'?'週':'日'}</span></div>`}).join(''):`<div class="desc">未有習慣。<button class="lnk" data-act="view" data-vt="habits" data-vid="">去建立</button></div>`);
+  const wv=[0,0,0,0,0,0,0];days.forEach((d,i)=>{wv[(pd(d).getDay()+6)%7]+=vals[i]});
+  h+=`<div class="sec-h">邊日最高效<small>過去 ${R} 日，按星期</small></div>`+barChart(wv,['一','二','三','四','五','六','日'],wv.map((v,i)=>`星期${'一二三四五六日'[i]}：${v} 項`),'每個星期幾完成嘅任務數');
+  h+=`<div class="sec-h">活躍熱圖<small>每日完成任務數</small></div>`+taskHeat(cd);
+  h+=`<p class="desc" style="white-space:normal;margin-top:22px">統計根據 Google Tasks 記錄嘅「完成時間」，已刪除嘅任務唔會計入。習慣資料存喺你 Google Tasks 入面名為「${DATA_TITLE}」嘅清單，請勿刪除。</p>`;
+  return h;
+}
+const tip=$('#tip');
+const tipPos=(x,y)=>{tip.style.left=Math.max(4,Math.min(innerWidth-tip.offsetWidth-4,x+12))+'px';tip.style.top=(y+16)+'px'};
+document.addEventListener('mouseover',e=>{const a=e.target.closest&&e.target.closest('[data-tip]');if(!a){tip.hidden=true;return}tip.textContent=a.dataset.tip;tip.hidden=false;tipPos(e.clientX,e.clientY)});
+document.addEventListener('mousemove',e=>{if(!tip.hidden)tipPos(e.clientX,e.clientY)});
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('[data-tip]');
+  if(a&&matchMedia('(hover:none)').matches){tip.textContent=a.dataset.tip;tip.hidden=false;tipPos(e.clientX-30,e.clientY-50);setTimeout(()=>{tip.hidden=true},1600)}
+});
+let rzT;window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(S.view.t==='stats'&&!$('#app').hidden)render()},200)});
+
+/* ---------- 主題、顏色、設定 ---------- */
+const SETTINGS_TITLE='__settings';
+const THEME=LS('tt_theme')||{mode:'auto'};
+const DEF_ACCENT='#507f76';
+const lum=hex=>{const n=parseInt(hex.slice(1),16);return(0.299*(n>>16&255)+0.587*(n>>8&255)+0.114*(n&255))/255};
+function applyTheme(){
+  const m=THEME.mode||'auto',dark=m==='dark'||(m==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
+  const r=document.documentElement,a=/^#[0-9a-f]{6}$/i.test(S.settings.accent||'')?S.settings.accent:DEF_ACCENT;
+  r.dataset.theme=dark?'dark':'light';
+  r.style.setProperty('--accent',a);
+  r.style.setProperty('--onbtn',lum(a)>0.62?'#202020':'#fff');
+  const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=a;
+}
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if((THEME.mode||'auto')==='auto')applyTheme()});
+let setChain=Promise.resolve();
+async function saveSettings(){
+  LS('tt_settings',S.settings);
+  const lid=await ensureDataList();
+  const body={title:SETTINGS_TITLE,notes:JSON.stringify({v:1,accent:S.settings.accent,projColors:S.settings.projColors||{}})};
+  if(S.setId){await api(`/lists/${lid}/tasks/${S.setId}`,{method:'PATCH',body:JSON.stringify(body)});return}
+  const r=await api(`/lists/${lid}/tasks`,{method:'POST',body:JSON.stringify(body)});S.setId=r.id;
+}
+const saveSettingsQ=()=>(setChain=setChain.then(saveSettings,saveSettings));
+const lc=c=>String(c||'').toLowerCase();
+const swHTML=(cur,cols=PAL)=>{
+  const has=cols.some(c=>lc(c)===lc(cur));
+  return cols.map(c=>`<button type="button" class="sw ${lc(c)===lc(cur)?'on':''}" data-c="${c}" style="background:${c}" aria-label="顏色 ${c}"></button>`).join('')+
+    `<label class="sw custom ${!has&&cur?'on':''}" title="自選顏色" ${!has&&cur?`style="background:${cur}"`:''}><input type="color" value="${/^#[0-9a-f]{6}$/i.test(cur||'')?cur:'#888888'}"></label>`;
+};
+function bindSw(root,fn){
+  const mark=c=>{
+    const presets=[...root.querySelectorAll('.sw[data-c]')],isPre=presets.some(y=>lc(y.dataset.c)===lc(c));
+    presets.forEach(x=>x.classList.toggle('on',lc(x.dataset.c)===lc(c)));
+    const cu=root.querySelector('.sw.custom');
+    if(cu){cu.classList.toggle('on',!isPre);cu.style.background=isPre?'':c}
+  };
+  root.querySelectorAll('.sw[data-c]').forEach(b=>b.onclick=()=>{mark(b.dataset.c);fn(b.dataset.c,true)});
+  const ci=root.querySelector('.sw.custom input');
+  if(ci){ci.oninput=()=>{mark(ci.value);fn(ci.value,false)};ci.onchange=()=>{mark(ci.value);fn(ci.value,true)}}
+}
+const ACC=['#507f76','#5a7694','#8a6f9e','#b0655f','#b58a3d','#6d8b4f','#a8708c','#55585c'];
+function openSettings(){
+  const d=$('#dlg'),mode=THEME.mode||'auto';
+  d.innerHTML=`<div class="dl" style="padding:22px"><div class="dsubh" style="margin:0 0 4px;font-size:16px">外觀</div>
+    <div class="fl">模式</div>
+    <div class="seg" id="s_mode">${[['auto','跟隨系統'],['light','淺色'],['dark','深色']].map(([k,l])=>`<button type="button" data-m="${k}" class="${mode===k?'on':''}">${l}</button>`).join('')}</div>
+    <div class="fl">主題色</div><div class="sws" id="s_acc">${swHTML(S.settings.accent||DEF_ACCENT,ACC)}</div>
+    <p class="desc" style="white-space:normal;margin-top:16px">主題色同專案顏色會同步到你所有裝置（存喺「${DATA_TITLE}」清單）；淺色 / 深色模式只套用於呢部裝置。專案顏色喺專案頁撳 ✎ 修改，習慣顏色喺習慣設定改。</p></div>
+    <div class="dfoot"><button class="btn" id="s_reset">還原預設</button><span class="sp"></span><button class="btn red" id="s_ok">完成</button></div>`;
+  d.onclose=()=>{S.rs=null};
+  const setMode=m=>{THEME.mode=m;LS('tt_theme',THEME);applyTheme();d.querySelectorAll('#s_mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===m))};
+  d.querySelectorAll('#s_mode button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+  const setAcc=(c,final)=>{S.settings.accent=c;applyTheme();if(final){LS('tt_settings',S.settings);render();run(()=>saveSettingsQ())}};
+  bindSw($('#s_acc'),setAcc);
+  $('#s_reset').onclick=()=>{setMode('auto');setAcc(DEF_ACCENT,true);$('#s_acc').innerHTML=swHTML(DEF_ACCENT,ACC);bindSw($('#s_acc'),setAcc)};
+  $('#s_ok').onclick=()=>d.close();
+  d.showModal();
+}
+$('#setb').onclick=openSettings;
+function openProject(id){
+  const l=id?S.lists.find(x=>x.id===id):null,d=$('#dlg');
+  let color=l?pcol(l.id):null,touched=false;
+  d.innerHTML=`<div class="dl" style="padding:22px"><div class="dsubh" style="margin:0 0 8px;font-size:16px">${l?'編輯專案':'新增專案'}</div>
+    <input id="p_name" class="bigin" placeholder="專案名稱" value="${l?esc(l.title):''}" autocomplete="off">
+    <div class="fl">顏色${l?'':'（唔揀就自動配色）'}</div><div class="sws" id="p_sw">${swHTML(color||'')}</div></div>
+    <div class="dfoot"><span class="sp"></span><button class="btn" id="p_cancel">取消</button><button class="btn red" id="p_save">${l?'儲存':'建立'}</button></div>`;
+  d.onclose=()=>{S.rs=null};
+  bindSw($('#p_sw'),c=>{color=c;touched=true});
+  $('#p_cancel').onclick=()=>d.close();
+  const save=()=>{
+    const n=$('#p_name').value.trim();if(!n)return $('#p_name').focus();
+    d.close();
+    if(l)run(async()=>{
+      const renamed=n!==l.title;l.title=n;
+      if(touched)S.settings.projColors[l.id]=color;
+      if(renamed)await api('/users/@me/lists/'+l.id,{method:'PATCH',body:JSON.stringify({title:n})});
+      if(touched)await saveSettingsQ();
+    });
+    else run(async()=>{
+      const r=await api('/users/@me/lists',{method:'POST',body:JSON.stringify({title:n})});
+      S.lists.push(r);S.view={t:'list',id:r.id};LS('tt_view',S.view);
+      if(touched){S.settings.projColors[r.id]=color;await saveSettingsQ()}
+    });
+  };
+  $('#p_save').onclick=save;
+  $('#p_name').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();save()}};
+  d.showModal();setTimeout(()=>$('#p_name').focus(),0);
+}
+
+/* ---------- 月曆 ---------- */
+const lastDayOf=ym=>new Date(+ym.slice(0,4),+ym.slice(5,7),0).getDate();
+const addM=(ym,n)=>{const d=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+n,1);return d.getFullYear()+'-'+pad(d.getMonth()+1)};
+function monthCells(ym){
+  const lead=(pd(ym+'-01').getDay()+6)%7,out=[];
+  for(let i=0;i<lead;i++)out.push(null);
+  for(let i=1;i<=lastDayOf(ym);i++)out.push(ym+'-'+pad(i));
+  while(out.length%7)out.push(null);
+  return out;
+}
+const WH=['一','二','三','四','五','六','日'];
+const calHead=(ym,attr)=>`<div class="calh"><button type="button" class="ibtn flip" ${attr}="-1" aria-label="上個月">${ic('chev',16)}</button><b>${ym.slice(0,4)}年${+ym.slice(5)}月</b><button type="button" class="ibtn" ${attr}="1" aria-label="下個月">${ic('chev',16)}</button><button type="button" class="btn" ${attr}="0">今日</button></div>`;
+function habitMonth(h,ym){
+  const td=today();let n=0,due=0,dn=0;
+  const cells=monthCells(ym).map(d=>{
+    if(!d)return '<span></span>';
+    const fut=d>td,on=isDone(h,d),sch=h.freq.k!=='week'&&hDue(h,d);
+    if(!fut){if(on)n++;if(sch){due++;if(on)dn++}}
+    return `<button type="button" class="cd ${on?'on':''} ${d===td?'td':''} ${fut?'fut':''} ${!sch&&!on&&h.freq.k!=='week'?'nd':''}" ${fut?'disabled':''} data-act="hcell" data-d="${d}" data-tip="${md(d)} ${wdName(d)}${on?' · 已打卡':''}">${+d.slice(8)}</button>`;
+  }).join('');
+  return `<div style="--hc:${h.color}">${calHead(ym,'data-nav')}<div class="cal">${WH.map(w=>`<div class="wh">${w}</div>`).join('')}${cells}</div><div class="calsum">本月打卡 ${n} 次${due?` · 完成率 ${Math.round(dn/due*100)}%`:''}</div></div>`;
+}
+function habitsCalHTML(){
+  const ym=S.calYm||today().slice(0,7),td=today();let chk=0,fullDays=0;
+  const grid=monthCells(ym).map(d=>{
+    if(!d)return '<span></span>';
+    const fut=d>td,sch=S.habits.filter(h=>h.freq.k!=='week'&&hDue(h,d)),dn=S.habits.filter(h=>isDone(h,d));
+    const full=!fut&&sch.length>0&&sch.every(h=>isDone(h,d));
+    if(!fut){chk+=dn.length;if(full)fullDays++}
+    const dots=dn.map(h=>`<i style="background:${h.color}"></i>`).join('')+(fut?'':sch.filter(h=>!isDone(h,d)).map(h=>`<i class="miss" style="--c:${h.color}"></i>`).join(''));
+    return `<button class="cdd ${d===td?'td':''} ${fut?'fut':''} ${full?'full':''}" data-act="calday" data-d="${d}" aria-label="${md(d)}"><span class="n">${+d.slice(8)}</span><span class="dots">${dots}</span></button>`;
+  }).join('');
+  return `${calHead(ym,'data-act="calnav" data-n')}<div class="cal">${WH.map(w=>`<div class="wh">${w}</div>`).join('')}${grid}</div>
+    <div class="calsum">本月打卡 ${chk} 次 · 全部完成 ${fullDays} 日</div>
+    <div class="legend">${S.habits.map(h=>`<span class="m"><i class="lgd" style="background:${h.color}"></i>${esc(h.name)}</span>`).join('')}<span class="m"><i class="lgd miss"></i>漏咗</span></div>`;
+}
+function openDay(d){
+  const dlg=$('#dlg');S.dayD=d;
+  const draw=()=>{
+    const done=T().filter(t=>t.done&&t.completedAt&&ymd(new Date(t.completedAt))===d);
+    dlg.innerHTML=`<div class="dl" style="padding:22px"><div class="dsubh" style="margin:0 0 10px;font-size:16px">${md(d)} ${wdName(d)}</div>
+      <div class="fl" style="margin-top:0">習慣</div>`+
+      (S.habits.map(h=>`<div class="hrow" data-id="${h.id}" style="--hc:${h.color}"><button class="hchk ${isDone(h,d)?'on':''}" data-act="dhcheck" ${d>today()?'disabled':''} aria-label="打卡">${ic('check',16)}</button><div class="hbody"><div class="title">${esc(h.name)}</div><div class="meta"><span class="m">${hFreqText(h)}</span></div></div></div>`).join('')||'<div class="desc">未有習慣</div>')+
+      `<div class="fl">當日完成嘅任務（${done.length}）</div>`+
+      (done.length?done.map(t=>`<div class="row done" style="padding:5px 0"><span class="chk" style="width:16px;height:16px;margin-top:3px">${ic('check',11)}</span><div class="body" style="cursor:default"><div class="title">${esc(t.title)}</div></div></div>`).join(''):'<div class="desc">冇</div>')+
+      `</div><div class="dfoot"><span class="sp"></span><button class="btn red" id="dy_ok">完成</button></div>`;
+    $('#dy_ok').onclick=()=>dlg.close();
+  };
+  S.rs=draw;dlg.onclose=()=>{S.rs=null;S.dayD=null};draw();dlg.showModal();
+}
+
 /* ---------- 事件 ---------- */
-function setView(t,id){S.view={t,id:id||''};S.q='';$('#q').value='';document.body.classList.remove('nav');render()}
+function setView(t,id){
+  S.view={t,id:id||''};S.q='';$('#q').value='';S.adding=false;
+  document.body.classList.remove('nav');
+  if(t!=='search')LS('tt_view',S.view);
+  render();$('#main').scrollTo(0,0);
+  if(t==='search')setTimeout(()=>$('#q').focus(),0);
+}
 document.addEventListener('click',e=>{
   const a=e.target.closest('[data-act]');if(!a)return;
   const act=a.dataset.act,rowEl=a.closest('[data-id]'),id=rowEl&&rowEl.dataset.id;
   if(act==='view')return setView(a.dataset.vt,a.dataset.vid);
-  if(act==='tag'){e.stopPropagation();return setView('tag',a.dataset.v)}
+  if(act==='tag')return setView('tag',a.dataset.v);
+  if(act==='sec'){const k=a.dataset.k;S.sec[k]=!S.sec[k];LS('tt_sec',S.sec);return render()}
   if(act==='fold'){S.collapsed.has(id)?S.collapsed.delete(id):S.collapsed.add(id);LS('tt_col',[...S.collapsed]);return render()}
   if(act==='toggle'){const t=S.tasks[id];return run(()=>patch(id,{done:!t.done}))}
+  if(act==='dsub-toggle'){const t=S.tasks[id];return run(()=>patch(id,{done:!t.done})).then(()=>S.rs&&S.rs())}
+  if(act==='dsub-open')return openEdit(id);
   if(act==='edit')return openEdit(id);
-  if(act==='addsub'){S.sub=S.sub===id?null:id;S.focusSub=true;S.collapsed.delete(id);return render()}
-  if(act==='newlist'){const n=prompt('新分類名稱');if(n&&n.trim())run(async()=>{const r=await api('/users/@me/lists',{method:'POST',body:JSON.stringify({title:n.trim()})});S.lists.push(r);S.view={t:'list',id:r.id}});return}
-  if(act==='renlist'){const l=S.lists.find(x=>x.id===S.view.id);const n=prompt('新名稱',l.title);if(n&&n.trim())run(async()=>{l.title=n.trim();await api('/users/@me/lists/'+l.id,{method:'PATCH',body:JSON.stringify({title:l.title})})});return}
-  if(act==='dellist'){const l=S.lists.find(x=>x.id===S.view.id);if(S.lists.length<2)return alert('至少要保留一個分類');
-    if(confirm(`刪除分類「${l.title}」同入面所有任務？無得復原。`))run(async()=>{S.lists=S.lists.filter(x=>x.id!==l.id);T().filter(t=>t.list===l.id).forEach(t=>delete S.tasks[t.id]);S.view={t:'all',id:''};await api('/users/@me/lists/'+l.id,{method:'DELETE'})});return}
+  if(act==='del'){if(confirm('刪除呢個任務同佢嘅所有子任務？'))run(()=>removeTask(id));return}
+  if(act==='addsub')return openAdd({parent:id});
+  if(act==='newhabit')return openHabit();
+  if(act==='hopen')return openHabit(id);
+  if(act==='hcheck')return toggleHabit(id,today());
+  if(act==='hday')return toggleHabit(id,a.dataset.d);
+  if(act==='hcell'){const h=S.habits.find(x=>x.id===S.hdlg);if(!h)return;const d=a.dataset.d;setDone(h,d,!isDone(h,d));run(()=>saveHabit(h));S.rs&&S.rs();return}
+  if(act==='hmode'){S.hmode=a.dataset.m;LS('tt_hmode',S.hmode);return render()}
+  if(act==='calnav'){const n=+a.dataset.n;S.calYm=n===0?today().slice(0,7):addM(S.calYm||today().slice(0,7),n);return render()}
+  if(act==='calday')return openDay(a.dataset.d);
+  if(act==='dhcheck'){toggleHabit(id,S.dayD);S.rs&&S.rs();return}
+  if(act==='range'){S.range=+a.dataset.n;LS('tt_range',S.range);return render()}
+  if(act==='newtask')return(document.body.classList.remove('nav'),openAdd());
+  if(act==='inlineadd'){S.adding=true;return renderInline()}
+  if(act==='newlist'){e.stopPropagation();document.body.classList.remove('nav');return openProject()}
+  if(act==='renlist')return openProject(S.view.id);
+  if(act==='dellist'){const l=S.lists.find(x=>x.id===S.view.id);
+    if(confirm(`刪除專案「${l.title}」同入面所有任務？無得復原。`))run(async()=>{S.lists=S.lists.filter(x=>x.id!==l.id);T().filter(t=>t.list===l.id).forEach(t=>delete S.tasks[t.id]);S.view={t:'today',id:''};await api('/users/@me/lists/'+l.id,{method:'DELETE'})});return}
 });
-function parseQuick(s){
-  const tags=[];let pri=0;
-  s=s.replace(/(^|\s)#([^\s#]+)/g,(m,a,g)=>{tags.push(g);return a}).replace(/(^|\s)!([1-3])(?=\s|$)/,(m,a,p)=>{pri=+p;return a}).trim();
-  return{title:s,tags,pri};
-}
-$('#add').onsubmit=e=>{
-  e.preventDefault();
-  const{title,tags,pri}=parseQuick($('#qa').value);
-  if(!title)return;
-  const v=S.view;
-  if(v.t==='tag'&&!tags.includes(v.id))tags.push(v.id);
-  const due=$('#qd').value||(v.t==='today'?today():null);
-  const list=$('#ql').value;
-  if(!list)return alert('未有分類');
-  LS('tt_dl',list);$('#qa').value='';
-  run(()=>addTask(list,title,{tags,pri,due}));
-};
 document.addEventListener('keydown',e=>{
-  if(e.target.id==='subin'){
-    if(e.key==='Enter'&&!e.isComposing){
-      const{title,tags,pri}=parseQuick(e.target.value);
-      if(!title)return;
-      const p=S.tasks[S.sub];e.target.value='';S.focusSub=true;
-      run(()=>addTask(p.list,title,{parent:p.id,tags,pri}));
-    }else if(e.key==='Escape'){S.sub=null;render()}
-    return;
-  }
-  if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||''))&&!$('#dlg').open){e.preventDefault();$('#q').focus()}
-});
-$('#q').oninput=e=>{S.q=e.target.value;render()};
+  if(e.key==='Enter'&&(e.isComposing||e.keyCode===229)&&e.target.closest&&e.target.closest('form'))e.preventDefault();
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||'')||dlgOpen()||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key==='q'){e.preventDefault();openAdd()}
+  else if(e.key==='/'){e.preventDefault();setView('search')}
+},true);
+for(const id of['#dlg','#adlg'])$(id).addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
+$('#q').oninput=e=>{S.q=e.target.value;$('#list').innerHTML=listHTML()};
 $('#sort').onchange=e=>{S.sort=e.target.value;LS('tt_sort',S.sort);render()};
 $('#done').onchange=e=>{S.done=e.target.checked;LS('tt_done',S.done);render()};
 $('#syncb').onclick=()=>pull(true);
 $('#burger').onclick=()=>document.body.classList.toggle('nav');
+$('#scrim').onclick=()=>document.body.classList.remove('nav');
+$('#fab').onclick=()=>S.view.t==='habits'?openHabit():openAdd();
 $('#out').onclick=()=>{
   if(!confirm('登出並清除本機快取？'))return;
   try{if(token)google.accounts.oauth2.revoke(token)}catch{}
@@ -489,18 +1215,19 @@ $('#signin').onclick=async()=>{
   if(!v)return($('#gerr').textContent='請貼上 Client ID');
   cid=v;LS('tt_cid',cid);$('#gerr').textContent='';
   try{await gis();await auth(false);showApp();await pull(true)}
-  catch(e){$('#gerr').textContent='登入失敗：'+e.message+'（檢查 Client ID、授權來源同 Test users 設定）'}
+  catch(e){$('#gerr').textContent='登入失敗：'+e.message+'（檢查 Client ID、授權來源同測試使用者設定）'}
 };
 (async function boot(){
+  applyTheme();
   S.sort=LS('tt_sort')||'manual';S.done=!!LS('tt_done');
   $('#sort').value=S.sort;$('#done').checked=S.done;
   if(!cid)return showGate();
   const c=LS('tt_cache');
-  if(c){S.lists=c.lists||[];S.tasks=c.tasks||{};showApp();render()}
+  if(c){S.habits=c.habits||[];S.dataId=c.dataId||null;S.setId=c.setId||null;S.lists=c.lists||[];S.tasks=c.tasks||{};S.defId=c.defId||(c.lists&&c.lists[0]&&c.lists[0].id)||null;showApp();render()}
   try{const[tk,ex]=JSON.parse(sessionStorage.getItem('tt_tok')||'null')||[];if(tk&&Date.now()<ex){token=tk;tokExp=ex}}catch{}
   if(!LS('tt_signed'))return showGate();
   try{await gis();await ensure();showApp();await pull(true)}
-  catch(e){if(!c){showGate()}else{showApp();$('#sync').textContent='離線 / 未登入（顯示上次資料）'}}
+  catch(e){if(!c){showGate()}else{showApp();$('#sync').textContent='離線 / 未登入'}}
 })();
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
