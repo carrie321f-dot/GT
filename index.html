@@ -482,17 +482,32 @@ async function run(fn){
 }
 
 /* ---------- 操作 ---------- */
+const isPrevErr=e=>/404|Previous task/i.test(String(e&&e.message));
+async function postTask(list,q,body){
+  try{return await api(`/lists/${list}/tasks?${q}`,{method:'POST',body})}
+  catch(e){
+    if(q.has('previous')&&isPrevErr(e)){q.delete('previous');return api(`/lists/${list}/tasks?${q}`,{method:'POST',body})}
+    throw e;
+  }
+}
+async function moveTask(list,id,q){
+  try{return await api(`/lists/${list}/tasks/${id}/move?${q}`,{method:'POST'})}
+  catch(e){
+    if(q.has('previous')&&isPrevErr(e)){q.delete('previous');return api(`/lists/${list}/tasks/${id}/move?${q}`,{method:'POST'})}
+    throw e;
+  }
+}
 async function addTask(list,title,o={}){
   const par=o.parent?S.tasks[o.parent]:null;
   const ap=par?(par.parent||par.id):null;
-  const last=T().filter(t=>t.list===list&&t.parent===ap).sort(byPos).pop();
+  const last=T().filter(t=>t.list===list&&t.parent===ap&&!t.done).sort(byPos).pop();
   const t={title,notes:o.notes||'',tags:o.tags||[],pri:o.pri||0,up:par&&par.id!==ap?par.id:null};
   const body={title,notes:enc(t)};
   if(o.due)body.due=o.due+'T00:00:00.000Z';
   const q=new URLSearchParams();
   if(ap)q.set('parent',ap);
   if(last)q.set('previous',last.id);
-  const r=await api(`/lists/${list}/tasks?${q}`,{method:'POST',body:JSON.stringify(body)});
+  const r=await postTask(list,q,JSON.stringify(body));
   S.tasks[r.id]=norm(r,list);
 }
 async function patch(id,ch){
@@ -525,7 +540,7 @@ async function moveList(id,nl){
     const q=new URLSearchParams();
     if(!root)q.set('parent',map[id]);
     if(lastBy[key])q.set('previous',lastBy[key]);
-    const r=await api(`/lists/${nl}/tasks?${q}`,{method:'POST',body:JSON.stringify(body)});
+    const r=await postTask(nl,q,JSON.stringify(body));
     map[o.id]=r.id;lastBy[key]=r.id;S.tasks[r.id]=norm(r,nl);
   }
   for(const o of old){delete S.tasks[o.id]}
@@ -537,11 +552,11 @@ async function reparent(id,newLp){
   const Ls=Object.fromEntries(ds.map(d=>[d,lp(S.tasks[d])]));
   const p=newLp?S.tasks[newLp]:null;
   const ap=p?(p.parent||p.id):null;
-  const last=T().filter(x=>x.list===t.list&&x.parent===ap&&x.id!==id).sort(byPos).pop();
+  const last=T().filter(x=>x.list===t.list&&x.parent===ap&&x.id!==id&&!x.done).sort(byPos).pop();
   const q=new URLSearchParams();
   if(ap)q.set('parent',ap);
   if(last)q.set('previous',last.id);
-  const r=await api(`/lists/${t.list}/tasks/${id}/move?${q}`,{method:'POST'});
+  const r=await moveTask(t.list,id,q);
   t.parent=r.parent||null;t.pos=r.position;t.up=p&&p.id!==ap?p.id:null;
   await patch(id,{});
   const top=ap||id;
@@ -549,7 +564,7 @@ async function reparent(id,newLp){
     const dt=S.tasks[d];
     if(dt.parent!==top){
       const mq=new URLSearchParams({parent:top});
-      const mr=await api(`/lists/${dt.list}/tasks/${d}/move?${mq}`,{method:'POST'});
+      const mr=await moveTask(dt.list,d,mq);
       dt.parent=top;dt.pos=mr.position;
     }
     const L=Ls[d];
