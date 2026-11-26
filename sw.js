@@ -1,5 +1,5 @@
 // TaskPlus service worker：只快取 app 外殼；Google API / 登入請求一律走網絡
-const VER = 'taskplus-v4';
+const VER = 'taskplus-v7';
 const SHELL = [
   './',
   './index.html',
@@ -31,7 +31,7 @@ self.addEventListener('fetch', e => {
   // 頁面：網絡優先（有更新即時用），離線先用快取
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req)
+      fetch(req, { cache: 'no-store' })
         .then(r => {
           const copy = r.clone();
           caches.open(VER).then(c => c.put('./index.html', copy));
